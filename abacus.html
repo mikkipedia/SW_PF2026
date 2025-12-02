@@ -24,6 +24,46 @@
             align-items: center;
             overflow: hidden;
             font-family: 'Nunito Sans', sans-serif;
+            position: relative;
+        }
+
+        /* Snowfall container */
+        .snowfall {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .paragraph-flake {
+            position: absolute;
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 20px;
+            font-weight: 700;
+            animation: fall linear infinite;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(-10vh) translateX(0) rotate(0deg);
+            }
+            100% {
+                transform: translateY(110vh) translateX(var(--drift)) rotate(360deg);
+            }
+        }
+
+        /* Content layer */
+        .content {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
 
         .main-text {
@@ -71,6 +111,7 @@
             border-radius: 50%;
             pointer-events: none;
             box-shadow: 0 0 10px #87ceeb, 0 0 20px silver;
+            z-index: 100;
         }
 
         @keyframes sparkFly {
@@ -158,11 +199,16 @@
     </style>
 </head>
 <body>
-    <div class="main-text" id="mainText"></div>
-    <div class="secondary-content" id="secondaryContent">
-        <div class="secondary-text">Jsme zde s vámi</div>
-        <div class="logo-container">
-            <svg width="1124" height="795" viewBox="0 0 1124 795" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- Snowfall background -->
+    <div class="snowfall" id="snowfall"></div>
+
+    <!-- Main content -->
+    <div class="content">
+        <div class="main-text" id="mainText"></div>
+        <div class="secondary-content" id="secondaryContent">
+            <div class="secondary-text">Jsme zde s vámi</div>
+            <div class="logo-container">
+                <svg width="1124" height="795" viewBox="0 0 1124 795" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g clip-path="url(#clip0_1_1249)">
 <mask id="mask0_1_1249" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="1124" height="795">
 <path d="M0.560059 0.850586H1123.08V794.552H0.560059V0.850586Z" fill="white"/>
@@ -333,10 +379,55 @@
 </clipPath>
 </defs>
 </svg>
+            </div>
         </div>
     </div>
 
     <script>
+        // Create paragraph snowfall
+        function createParagraphSnowfall() {
+            const snowfallContainer = document.getElementById('snowfall');
+            const paragraphCount = 30; // Number of falling paragraphs
+            
+            for (let i = 0; i < paragraphCount; i++) {
+                const paragraph = document.createElement('div');
+                paragraph.className = 'paragraph-flake';
+                paragraph.textContent = '§';
+                
+                // Random size for depth of field effect
+                const size = Math.random() * 30 + 15; // 15-45px
+                paragraph.style.fontSize = size + 'px';
+                
+                // Blur for bokeh effect - larger = more blurred (further away)
+                const blur = (45 - size) / 8; // Inverse relationship with size
+                paragraph.style.filter = `blur(${blur}px)`;
+                
+                // Opacity based on size (smaller/further = more transparent)
+                const opacity = 0.3 + (size / 45) * 0.4; // 0.3-0.7
+                paragraph.style.opacity = opacity;
+                
+                // Random horizontal position
+                paragraph.style.left = Math.random() * 100 + '%';
+                
+                // Random animation duration (speed)
+                const duration = 8 + Math.random() * 12; // 8-20 seconds
+                paragraph.style.animationDuration = duration + 's';
+                
+                // Random delay
+                paragraph.style.animationDelay = Math.random() * 5 + 's';
+                
+                // Random horizontal drift
+                const drift = (Math.random() - 0.5) * 100; // -50 to 50px
+                paragraph.style.setProperty('--drift', drift + 'px');
+                
+                snowfallContainer.appendChild(paragraph);
+            }
+        }
+        
+        // Initialize snowfall
+        createParagraphSnowfall();
+        
+        // Main text animation
         const text = "Vše nejlepší v roce 2026";
         const mainTextEl = document.getElementById('mainText');
         const secondaryContentEl = document.getElementById('secondaryContent');
