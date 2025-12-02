@@ -689,3 +689,106 @@
         if (b.x < -b.r) b.x = W + b.r;
         if (b.x > W + b.r) b.x = -b.r;
         if (b.y < -b.r) b.y = H + b.r;
+        if (b.y > H + b.r) b.y = -b.r;
+
+        bgCtx.beginPath();
+        bgCtx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
+        bgCtx.fillStyle = `rgba(255,255,255,${b.a})`;
+        bgCtx.fill();
+      }
+
+      // paragraph flakes
+      bgCtx.textAlign = 'center';
+      bgCtx.textBaseline = 'middle';
+
+      for (const f of bg.flakes) {
+        f.x += f.vx * dt;
+        f.y += f.vy * dt;
+        f.rot += f.vr * dt;
+
+        if (f.y > H + 60) {
+          f.y = rand(-120, -20);
+          f.x = rand(0, W);
+        }
+        if (f.x < -80) f.x = W + 80;
+        if (f.x > W + 80) f.x = -80;
+
+        bgCtx.save();
+        bgCtx.translate(f.x, f.y);
+        bgCtx.rotate(f.rot);
+
+        // blur-like softness without filter (fast + stable)
+        // draw a glow behind
+        bgCtx.fillStyle = `rgba(255,255,255,${f.a * 0.22})`;
+        bgCtx.font = `${f.size * 1.22}px "Nunito Sans", sans-serif`;
+        bgCtx.fillText(f.glyph, 0, 0);
+
+        bgCtx.fillStyle = `rgba(255,255,255,${f.a})`;
+        bgCtx.font = `${f.size}px "Nunito Sans", sans-serif`;
+        bgCtx.fillText(f.glyph, 0, 0);
+
+        bgCtx.restore();
+      }
+
+      // --- FX canvas
+      fxCtx.clearRect(0, 0, W, H);
+
+      // sparks
+      for (let i = fx.sparks.length - 1; i >= 0; i--) {
+        const s = fx.sparks[i];
+        s.t += dt;
+        if (!s.max) s.max = s.life;
+
+        const k = s.t / s.max;
+        if (k >= 1) {
+          fx.sparks.splice(i, 1);
+          continue;
+        }
+
+        // physics
+        s.vy += 520 * dt; // gravity
+        s.x += s.vx * dt;
+        s.y += s.vy * dt;
+
+        const a = (1 - k) * (0.95 - k * 0.35);
+        const glow = 10 + (1 - k) * 18;
+
+        // silver-blue vs silver
+        const c = (s.hue === 200)
+          ? `rgba(210,240,255,${a})`
+          : `rgba(235,235,235,${a})`;
+
+        fxCtx.beginPath();
+        fxCtx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+        fxCtx.fillStyle = c;
+        fxCtx.fill();
+
+        // glow pass
+        fxCtx.beginPath();
+        fxCtx.arc(s.x, s.y, s.r + 0.8, 0, Math.PI * 2);
+        fxCtx.fillStyle = (s.hue === 200)
+          ? `rgba(210,240,255,${a * 0.22})`
+          : `rgba(235,235,235,${a * 0.18})`;
+        fxCtx.shadowColor = c;
+        fxCtx.shadowBlur = glow;
+        fxCtx.fill();
+        fxCtx.shadowBlur = 0;
+      }
+
+      requestAnimationFrame(draw);
+    }
+    requestAnimationFrame(draw);
+
+    // =========================
+    // Init & interactions
+    // =========================
+    // Start immediately
+    startAnimation();
+
+    // Replay on click/tap
+    replayCatcher.addEventListener('click', restart);
+
+    // Space/Enter to replay
+    window.addEventListener('keydown', (e) => {
+      if (e.code === 'Space' || e.code === 'Enter') restart();
+    });
