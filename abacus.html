@@ -396,7 +396,7 @@
         // Create paragraph snowfall - starts immediately, independent of text animation
         function createParagraphSnowfall() {
             const snowfallContainer = document.getElementById('snowfall');
-            const paragraphCount = 40; // Increased count for better coverage
+            const paragraphCount = 120; // Increased to 120 (200% more than 40)
             
             for (let i = 0; i < paragraphCount; i++) {
                 const paragraph = document.createElement('div');
@@ -431,8 +431,8 @@
                 const duration = 15 + Math.random() * 15; // 15-30 seconds
                 paragraph.style.animationDuration = duration + 's';
                 
-                // Stagger the start times across a wider range
-                const delay = Math.random() * 20; // 0-20 seconds delay
+                // Shorter delay so paragraphs start falling much earlier
+                const delay = Math.random() * 8; // 0-8 seconds delay (reduced from 20)
                 paragraph.style.animationDelay = delay + 's';
                 
                 // Random horizontal drift
