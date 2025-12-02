@@ -38,32 +38,41 @@
             z-index: 1;
         }
 
-        .paragraph-flake {
+       .paragraph-flake {
     position: absolute;
     color: rgba(255, 255, 255, 0.6);
     font-size: 20px;
     font-weight: 700;
     animation: fall linear infinite;
     text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-    /* startovní pozice hodně nad obrazovkou */
-    top: -30vh;
 }
 
-/* nový fall */
+/* finální verze */
 @keyframes fall {
     0% {
-        transform: translateY(0) translateX(0) rotate(0deg);
-        opacity: 0;              /* zcela neviditelné */
+        /* hodně nad obrazovkou */
+        transform: translateY(-40vh) translateX(0) rotate(0deg);
+        opacity: 0;
     }
-    15% {
-        opacity: var(--opacity); /* teprve zde „vjíždí“ do obrazu */
+    10% {
+        /* stále nad viewportem, začíná fade-in */
+        transform: translateY(-20vh) translateX(0) rotate(90deg);
+        opacity: calc(var(--opacity) * 0.4);
+    }
+    25% {
+        /* krátce po vstupu do obrazu – už plná viditelnost */
+        transform: translateY(0) translateX(0) rotate(180deg);
+        opacity: var(--opacity);
     }
     90% {
-        opacity: var(--opacity); /* většinu času viditelné */
+        /* většinu času viditelný pád */
+        transform: translateY(100vh) translateX(var(--drift)) rotate(320deg);
+        opacity: var(--opacity);
     }
     100% {
-        transform: translateY(160vh) translateX(var(--drift)) rotate(360deg);
-        opacity: 0;              /* zmizí hluboko pod obrazovkou */
+        /* hodně pod obrazovkou, plynulý fade-out */
+        transform: translateY(140vh) translateX(var(--drift)) rotate(360deg);
+        opacity: 0;
     }
 }
 
