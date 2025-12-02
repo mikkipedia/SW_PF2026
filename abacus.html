@@ -50,28 +50,33 @@
 /* finální verze */
 @keyframes fall {
     0% {
-        /* hodně nad obrazovkou */
-        transform: translateY(-40vh) translateX(0) rotate(0deg);
+        /* extrémně vysoko nad obrazovkou, neviditelné */
+        transform: translateY(-120vh) translateX(0) rotate(0deg);
         opacity: 0;
     }
-    10% {
-        /* stále nad viewportem, začíná fade-in */
-        transform: translateY(-20vh) translateX(0) rotate(90deg);
-        opacity: calc(var(--opacity) * 0.4);
-    }
     25% {
-        /* krátce po vstupu do obrazu – už plná viditelnost */
-        transform: translateY(0) translateX(0) rotate(180deg);
+        /* pořád výrazně nad horní hranou, stále neviditelné */
+        transform: translateY(-80vh) translateX(0) rotate(90deg);
+        opacity: 0;
+    }
+    40% {
+        /* těsně nad obrazovkou, začíná fade‑in */
+        transform: translateY(-20vh) translateX(0) rotate(150deg);
+        opacity: calc(var(--opacity) * 0.3);
+    }
+    55% {
+        /* už v obrazu, plná viditelnost */
+        transform: translateY(0) translateX(0) rotate(220deg);
         opacity: var(--opacity);
     }
     90% {
-        /* většinu času viditelný pád */
+        /* většinu času v pádu přes celý viewport */
         transform: translateY(100vh) translateX(var(--drift)) rotate(320deg);
         opacity: var(--opacity);
     }
     100% {
-        /* hodně pod obrazovkou, plynulý fade-out */
-        transform: translateY(140vh) translateX(var(--drift)) rotate(360deg);
+        /* hluboko pod obrazovkou + fade‑out */
+        transform: translateY(160vh) translateX(var(--drift)) rotate(360deg);
         opacity: 0;
     }
 }
