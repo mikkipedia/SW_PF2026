@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Novoroční přání 2026</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(135deg, #593146 0%, #28324f 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            font-family: 'Nunito Sans', sans-serif;
+            position: relative;
+        }
+
+        /* Snowfall container */
+        .snowfall {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .paragraph-flake {
+            position: absolute;
+            color: rgba(255, 255, 255, 0.6);
+            font-weight: 700;
+            animation: fall linear infinite;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+            will-change: transform, opacity;
+        }
+
+        @keyframes fall {
+            0% {
+                transform: translateY(0) translateX(0) rotate(0deg);
+                opacity: 0;
+            }
+            3% {
+                opacity: var(--opacity);
+            }
+            97% {
+                opacity: var(--opacity);
+            }
+            100% {
+                transform: translateY(var(--fall-distance)) translateX(var(--drift)) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        /* Content layer */
+        .content {
+            position: relative;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .main-text {
+            font-size: 4rem;
+            font-weight: 800;
+            color: white;
+            text-align: center;
+            position: relative;
+            margin-bottom: 3rem;
+            letter-spacing: 0.01em;
+        }
+
+        .letter {
+            display: inline-block;
+            opacity: 0;
+            position: relative;
+        }
+
+        .letter.visible {
+            animation: sparkleIn 0.6s forwards;
+        }
+
+        @keyframes sparkleIn {
+            0% {
+                opacity: 0;
+                transform: scale(0.5);
+                filter: brightness(3) drop-shadow(0 0 20px #87ceeb);
+            }
+            50% {
+                opacity: 1;
+                filter: brightness(2) drop-shadow(0 0 30px #87ceeb) drop-shadow(0 0 40px silver);
+            }
+            100% {
+                opacity: 1;
+                transform: scale(1);
+                filter: brightness(1) drop-shadow(0 0 5px rgba(135, 206, 235, 0.5));
+            }
+        }
+
+        .spark {
+            position: absolute;
+            width: 3px;
+            height: 3px;
+            background: silver;
+            border-radius: 50%;
+            pointer-events: none;
+            box-shadow: 0 0 10px #87ceeb, 0 0 20px silver;
+            z-index: 100;
+        }
+
+        @keyframes sparkFly {
+            0% {
+                transform: translate(0, 0) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(var(--tx), var(--ty)) scale(0);
+                opacity: 0;
+            }
+        }
+
+        .word-2026 {
+            display: inline-block;
+        }
+
+        .word-2026.flash {
+            animation: fireFlash 0.8s ease-out;
+        }
+
+        @keyframes fireFlash {
+            0%, 100% {
+                filter: brightness(1) drop-shadow(0 0 5px rgba(135, 206, 235, 0.5));
+            }
+            25% {
+                filter: brightness(3) drop-shadow(0 0 40px #ff6600) drop-shadow(0 0 60px #ff3300);
+                color: #ffaa00;
+            }
+            50% {
+                filter: brightness(4) drop-shadow(0 0 50px #ff3300) drop-shadow(0 0 70px #ff6600);
+                color: #ff6600;
+            }
+            75% {
+                filter: brightness(2) drop-shadow(0 0 30px #ff6600);
+                color: #ffcc00;
+            }
+        }
+
+        .secondary-content {
+            opacity: 0;
+            text-align: center;
+        }
+
+        .secondary-content.visible {
+            animation: fadeIn 1.5s forwards;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+            }
+        }
+
+        .secondary-text {
+            font-size: 2rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 2rem;
+            letter-spacing: 0.05em;
+        }
+
+        .logo-container {
+            width: 400px;
+            height: auto;
+        }
+
+        .logo-container svg {
+            width: 100%;
+            height: auto;
+            filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.3));
+        }
+
+        @media (max-width: 768px) {
+            .main-text {
+                font-size: 2rem;
+            }
+            .secondary-text {
+                font-size: 1.5rem;
+            }
+            .logo-container {
+                width: 280px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Snowfall background -->
+    <div class="snowfall" id="snowfall"></div>
+
+    <!-- Main content -->
+    <div class="content">
+        <div class="main-text" id="mainText"></div>
+        <div class="secondary-content" id="secondaryContent">
+            <div class="secondary-text">Jsme zde s vámi</div>
+            <div class="logo-container">
+                <svg width="1124" height="795" viewBox="0 0 1124 795" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g clip-path="url(#clip0_1_1249)">
+<mask id="mask0_1_1249" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="1124" height="795">
+<path d="M0.560059 0.850586H1123.08V794.552H0.560059V0.850586Z" fill="white"/>
+</mask>
+<g mask="url(#mask0_1_1249)">
+<path d="M554.923 336.413C554.923 339.423 553.353 341.143 550.207 341.143H546.205C543.198 341.143 541.483 339.423 541.483 336.413V329.824C541.483 320.941 537.481 317.932 530.045 317.932C522.614 317.932 518.609 320.941 518.609 329.824V384.843C518.609 393.728 522.614 396.735 530.045 396.735C537.481 396.735 541.483 393.728 541.483 384.843V368.077H534.191C531.189 368.077 529.475 366.503 529.475 363.352V361.347C529.475 358.191 531.189 356.617 534.191 356.617H550.207C553.353 356.617 554.923 358.191 554.923 361.347V387.421C554.923 402.465 545.771 408.627 530.619 408.627H529.475C514.321 408.627 505.169 402.609 505.169 387.421V327.245C505.169 312.775 514.321 306.04 529.475 306.04H530.619C545.771 306.04 554.923 312.775 554.923 327.245V336.413ZM475.441 402.755C475.441 405.761 473.863 407.48 470.718 407.48H466.574C463.857 407.48 462.142 406.189 461.283 403.613L436.835 336.129V402.755C436.835 405.761 435.121 407.48 432.117 407.48H429.117C425.969 407.48 424.398 405.761 424.398 402.755V311.915C424.398 308.905 425.969 307.185 429.117 307.185H433.833C436.55 307.185 438.41 308.473 439.267 311.055L462.999 376.248V311.915C462.999 308.905 464.715 307.185 467.718 307.185H470.718C473.863 307.185 475.441 308.905 475.441 311.915V402.755ZM393.519 402.755C393.519 405.761 391.805 407.48 388.801 407.48H384.802C381.654 407.48 380.083 405.761 380.083 402.755V311.915C380.083 308.905 381.654 307.185 384.802 307.185H388.801C391.805 307.185 393.519 308.905 393.519 311.915V402.755ZM347.777 407.48H343.774C341.057 407.48 339.339 406.337 338.485 403.613L325.902 366.361H314.181V402.755C314.181 405.761 312.465 407.48 309.462 407.48H305.459C302.314 407.48 300.741 405.761 300.741 402.755V311.915C300.741 308.904 302.314 307.185 305.459 307.185H325.761C340.915 307.185 350.065 313.633 350.065 328.393V345.156C350.065 355.184 345.775 361.345 338.339 364.352L351.779 402.036C352.782 405.188 351.207 407.48 347.777 407.48ZM274.15 346.3C274.15 361.057 265.002 367.508 249.846 367.508H238.266V402.756C238.266 405.763 236.551 407.481 233.547 407.481H229.545C226.401 407.481 224.826 405.763 224.826 402.756V311.916C224.826 308.907 226.401 307.187 229.545 307.187H249.846C265.002 307.187 274.15 313.632 274.15 328.392V346.3ZM196.807 387.709C196.807 402.756 188.089 408.628 172.93 408.628H172.647C157.493 408.628 148.769 402.897 148.769 387.709V375.387C148.769 372.376 150.345 370.66 153.49 370.66H157.206C160.351 370.66 161.922 372.376 161.922 375.387V385.417C161.922 393.295 165.783 396.877 172.789 396.877C179.795 396.877 183.657 393.295 183.657 385.417V377.537C183.657 371.517 181.51 368.941 175.649 365.641L162.779 358.479C153.631 353.177 148.769 348.88 148.769 339.283V326.673C148.769 312.2 158.778 306.039 172.503 306.039H172.789C186.513 306.039 196.521 312.2 196.521 326.673V337.851C196.521 340.857 194.95 342.576 191.802 342.576H188.089C184.945 342.576 183.367 340.857 183.367 337.851V328.965C183.367 320.943 179.509 317.788 172.647 317.788C165.783 317.788 161.922 320.943 161.922 328.965V335.841C161.922 341.861 164.067 344.008 169.789 347.303L182.798 354.468C191.375 359.339 196.807 364.209 196.807 373.812V387.709ZM619.322 457.677L584.942 254.048H96.9647V457.677H615.005H619.322Z" fill="white"/>
+</g>
+<mask id="mask1_1_1249" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="1124" height="795">
+<path d="M0.560059 0.850647H1123.08V794.552H0.560059V0.850647Z" fill="white"/>
+</mask>
+<g mask="url(#mask1_1_1249)">
+<path d="M325.186 319.077H314.18V354.611H325.186C332.622 354.611 336.624 351.601 336.624 342.719V330.969C336.624 322.087 332.622 319.077 325.186 319.077Z" fill="white"/>
+</g>
+<mask id="mask2_1_1249" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="1124" height="795">
+<path d="M0.560059 0.850647H1123.08V794.552H0.560059V0.850647Z" fill="white"/>
+</mask>
+<g mask="url(#mask2_1_1249)">
+<path d="M249.272 319.079H238.266V355.472H249.272C256.708 355.472 260.713 352.461 260.713 343.721V330.971C260.713 322.088 256.708 319.079 249.272 319.079Z" fill="white"/>
+</g>
+<mask id="mask3_1_1249" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="1124" height="795">
+<path d="M0.560059 0.850586H1123.08V794.552H0.560059V0.850586Z" fill="white"/>
+</mask>
+<g mask="url(#mask3_1_1249)">
+<path d="M680.376 307.185H684.092C686.952 307.185 688.667 308.903 688.953 311.627L698.676 383.409L712.255 311.486C712.688 308.621 714.541 307.185 717.4 307.185H720.979C723.693 307.185 725.695 308.621 726.125 311.486L739.707 383.409L749.288 311.627C749.716 308.903 751.431 307.185 754.289 307.185H757.291C760.583 307.185 762.153 308.903 761.581 312.201L746.995 403.039C746.571 406.047 744.711 407.479 741.993 407.479H737.991C735.132 407.479 733.275 406.047 732.7 403.182L719.123 332.833L705.393 403.182C704.824 406.047 702.961 407.479 700.247 407.479H695.676C692.955 407.479 691.096 406.047 690.668 403.039L676.088 312.201C675.513 308.903 677.087 307.185 680.376 307.185ZM777.02 402.322L795.031 311.486C795.605 308.621 797.465 307.185 800.177 307.185H808.185C810.903 307.185 812.76 308.621 813.331 311.486L831.632 402.322C832.348 405.622 830.632 407.479 827.484 407.479H823.34C820.479 407.479 818.767 406.047 818.195 403.185L814.761 383.841H793.171L789.74 403.185C789.313 406.047 787.453 407.479 784.736 407.479H781.164C778.019 407.479 776.448 405.622 777.02 402.322ZM856.935 311.915C856.935 308.906 858.505 307.186 861.651 307.186H865.656C868.656 307.186 870.375 308.906 870.375 311.915V395.303H892.677C895.821 395.303 897.396 397.019 897.396 400.031V402.755C897.396 405.762 895.821 407.481 892.677 407.481H861.651C858.505 407.481 856.935 405.762 856.935 402.755V311.915ZM921.837 311.914C921.837 308.905 923.411 307.186 926.556 307.186H930.559C933.559 307.186 935.277 308.905 935.277 311.914V355.47L956.577 310.769C957.577 308.331 959.437 307.186 962.013 307.186H966.729C970.448 307.186 971.877 309.622 970.16 312.774L952.72 344.866L973.019 402.037C974.02 405.189 972.449 407.481 969.019 407.481H965.013C962.299 407.481 960.584 406.337 959.723 403.614L944.712 359.623L935.277 376.821V402.754C935.277 405.761 933.559 407.481 930.559 407.481H926.556C923.411 407.481 921.837 405.761 921.837 402.754V311.914ZM615.005 254.047L649.68 457.677H1025.12V254.047H619.321H615.005Z" fill="white"/>
+</g>
+<mask id="mask4_1_1249" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="1124" height="795">
+<path d="M0.560059 0.850586H1123.08V794.552H0.560059V0.850586Z" fill="white"/>
+</mask>
+<g mask="url(#mask4_1_1249)">
+<path d="M804.038 324.092L795.32 372.521H812.76L804.038 324.092Z" fill="white"/>
+</g>
+<mask id="mask5_1_1249" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="1124" height="795">
+<path d="M0.560059 0.850586H1123.08V794.552H0.560059V0.850586Z" fill="white"/>
+</mask>
+<g mask="url(#mask5_1_1249)">
+<path d="M336.624 342.719C336.624 351.6 332.622 354.611 325.186 354.611H314.18V319.078H325.186C332.622 319.078 336.624 322.087 336.624 330.968V342.719Z" fill="white"/>
+</g>
+<mask id="mask6_1_1249" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="1124" height="795">
+<path d="M0.560059 0.850586H1123.08V794.552H0.560059V0.850586Z" fill="white"/>
+</mask>
+<g mask="url(#mask6_1_1249)">
+<path d="M299.768 524.688L303.467 504.152L307.165 524.688H299.768ZM315.164 537.321L307.405 498.808C307.165 497.596 306.376 496.984 305.224 496.984H301.832C300.68 496.984 299.892 497.596 299.648 498.808L292.009 537.321C291.769 538.718 292.435 539.508 293.771 539.508H295.284C296.436 539.508 297.223 538.902 297.405 537.686L298.859 529.486H308.011L309.467 537.686C309.711 538.902 310.436 539.508 311.649 539.508H313.407C314.743 539.508 315.468 538.718 315.164 537.321Z" fill="white"/>
+</g>
+<mask id="mask7_1_1249" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="1124" height="795">
+<path d="M0.560059 0.850647H1123.08V794.552H0.560059V0.850647Z" fill="white"/>
+</mask>
+<g mask="url(#mask7_1_1249)">
+<path d="M340.982 529.424C340.982 533.19 339.287 534.466 336.134 534.466H331.59V502.026H336.134C339.287 502.026 340.982 503.306 340.982 507.069V529.424ZM336.378 496.984H327.891C326.558 496.984 325.892 497.714 325.892 498.99V537.504C325.892 538.78 326.558 539.509 327.891 539.509H336.378C342.803 539.509 346.682 536.773 346.682 530.518V505.978C346.682 499.72 342.803 496.984 336.378 496.984Z" fill="white"/>
+</g>
+<mask id="mask8_1_1249" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="1124" height="795">
+<path d="M0.560059 0.850586H1123.08V794.552H0.560059V0.850586Z" fill="white"/>
+</mask>
+<g mask="url(#mask8_1_1249)">
+<path d="M377.228 496.984H375.71C374.558 496.984 373.773 497.596 373.589 498.808L368.013 530.337L362.497 498.808C362.316 497.596 361.528 496.984 360.314 496.984H358.557C357.224 496.984 356.556 497.777 356.8 499.173L364.438 537.686C364.621 538.902 365.406 539.508 366.62 539.508H369.162C370.378 539.508 371.164 538.902 371.348 537.686L378.985 499.173C379.289 497.777 378.558 496.984 377.228 496.984Z" fill="white"/>
+</g>
+<mask id="mask9_1_1249" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="1124" height="795">
+<path d="M0.560059 0.850647H1123.08V794.552H0.560059V0.850647Z" fill="white"/>
+</mask>
+<g mask="url(#mask9_1_1249)">
+<path d="M404.499 529.909C404.499 533.676 402.802 534.952 399.651 534.952C396.497 534.952 394.803 533.676 394.803 529.909V506.584C394.803 502.817 396.497 501.541 399.651 501.541C402.802 501.541 404.499 502.817 404.499 506.584V529.909ZM399.891 496.501H399.407C392.982 496.501 389.103 499.174 389.103 505.489V531.001C389.103 537.262 392.982 539.994 399.407 539.994H399.891C406.317 539.994 410.197 537.262 410.197 531.001V505.489C410.197 499.234 406.317 496.501 399.891 496.501Z" fill="white"/>
+</g>
+<mask id="mask10_1_1249" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="1124" height="795">
+<path d="M0.560059 0.850586H1123.08V794.552H0.560059V0.850586Z" fill="white"/>
+</mask>
+<g mask="url(#mask10_1_1249)">
+<path d="M435.893 512.962L443.288 499.357C444.016 498.018 443.408 496.983 441.833 496.983H439.832C438.74 496.983 437.954 497.473 437.53 498.503L428.498 517.455V498.989C428.498 497.717 427.77 496.983 426.497 496.983H424.8C423.468 496.983 422.802 497.717 422.802 498.989V537.502C422.802 538.778 423.468 539.509 424.8 539.509H426.497C427.77 539.509 428.498 538.778 428.498 537.502V526.506L432.498 519.217L438.86 537.867C439.228 539.022 439.956 539.509 441.108 539.509H442.802C444.256 539.509 444.924 538.537 444.5 537.198L435.893 512.962Z" fill="white"/>
+</g>
+<mask id="mask11_1_1249" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="1124" height="795">
+<path d="M0.560059 0.850586H1123.08V794.552H0.560059V0.850586Z" fill="white"/>
+</mask>
+<g mask="url(#mask11_1_1249)">
+<path d="M460.558 524.689L464.257 504.153L467.953 524.689H460.558ZM468.195 498.809C467.953 497.594 467.166 496.985 466.014 496.985H462.619C461.467 496.985 460.678 497.594 460.438 498.809L452.799 537.322C452.555 538.719 453.225 539.509 454.557 539.509H456.074C457.226 539.509 458.015 538.899 458.195 537.685L459.653 529.483H468.803L470.257 537.685C470.498 538.899 471.226 539.509 472.439 539.509H474.199C475.53 539.509 476.258 538.719 475.957 537.322L468.195 498.809Z" fill="white"/>
+</g>
+<mask id="mask12_1_1249" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="1124" height="795">
+<path d="M0.560059 0.850586H1123.08V794.552H0.560059V0.850586Z" fill="white"/>
+</mask>
+<g mask="url(#mask12_1_1249)">
+<path d="M467.411 485.446C466.315 485.446 465.529 485.871 465.045 486.903L462.74 491.336C462.075 492.672 462.68 493.646 464.193 493.646H464.377C465.409 493.646 466.135 493.282 466.803 492.491L470.499 487.876C471.591 486.538 470.983 485.446 469.288 485.446H467.411Z" fill="white"/>
+</g>
+<mask id="mask13_1_1249" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="1124" height="795">
+<path d="M0.560059 0.850586H1123.08V794.552H0.560059V0.850586Z" fill="white"/>
+</mask>
+<g mask="url(#mask13_1_1249)">
+<path d="M499.652 496.985H483.164C481.894 496.985 481.163 497.714 481.163 498.99V500.025C481.163 501.361 481.894 502.027 483.164 502.027H488.559V537.503C488.559 538.777 489.288 539.509 490.558 539.509H492.258C493.531 539.509 494.256 538.777 494.256 537.503V502.027H499.652C500.986 502.027 501.654 501.361 501.654 500.025V498.99C501.654 497.714 500.986 496.985 499.652 496.985Z" fill="white"/>
+</g>
+<mask id="mask14_1_1249" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="1124" height="795">
+<path d="M0.560059 0.850586H1123.08V794.552H0.560059V0.850586Z" fill="white"/>
+</mask>
+<g mask="url(#mask14_1_1249)">
+<path d="M531.287 496.984H530.017C528.745 496.984 528.019 497.717 528.019 498.989V526.265L517.955 498.624C517.591 497.533 516.803 496.984 515.65 496.984H513.649C512.319 496.984 511.651 497.717 511.651 498.989V537.502C511.651 538.778 512.319 539.508 513.649 539.508H514.925C516.198 539.508 516.923 538.778 516.923 537.502V509.258L527.287 537.868C527.651 538.96 528.381 539.508 529.533 539.508H531.287C532.623 539.508 533.291 538.778 533.291 537.502V498.989C533.291 497.717 532.623 496.984 531.287 496.984Z" fill="white"/>
+</g>
+<mask id="mask15_1_1249" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="1124" height="795">
+<path d="M0.560059 0.850586H1123.08V794.552H0.560059V0.850586Z" fill="white"/>
+</mask>
+<g mask="url(#mask15_1_1249)">
+<path d="M554.197 485.445H552.32C551.227 485.445 550.439 485.871 549.955 486.903L547.649 491.336C546.987 492.672 547.592 493.645 549.105 493.645H549.287C550.319 493.645 551.044 493.281 551.712 492.491L555.407 487.876C556.503 486.537 555.892 485.445 554.197 485.445Z" fill="white"/>
+</g>
+<mask id="mask16_1_1249" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="1124" height="795">
+<path d="M0.560059 0.850647H1123.08V794.552H0.560059V0.850647Z" fill="white"/>
+</mask>
+<g mask="url(#mask16_1_1249)">
+<path d="M550.075 496.984H548.377C547.044 496.984 546.376 497.714 546.376 498.99V537.503C546.376 538.779 547.044 539.508 548.377 539.508H550.075C551.351 539.508 552.076 538.779 552.076 537.503V498.99C552.076 497.714 551.351 496.984 550.075 496.984Z" fill="white"/>
+</g>
+<mask id="mask17_1_1249" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="1124" height="795">
+<path d="M0.560059 0.850586H1123.08V794.552H0.560059V0.850586Z" fill="white"/>
+</mask>
+<g mask="url(#mask17_1_1249)">
+<path d="M594.016 512.962L601.411 499.357C602.139 498.018 601.531 496.983 599.956 496.983H597.955C596.863 496.983 596.077 497.473 595.653 498.503L586.621 517.455V498.989C586.621 497.717 585.893 496.983 584.62 496.983H582.924C581.591 496.983 580.925 497.717 580.925 498.989V537.502C580.925 538.778 581.591 539.509 582.924 539.509H584.62C585.893 539.509 586.621 538.778 586.621 537.502V526.506L590.621 519.217L596.983 537.867C597.351 539.022 598.079 539.509 599.231 539.509H600.925C602.379 539.509 603.047 538.537 602.623 537.198L594.016 512.962Z" fill="white"/>
+</g>
+<mask id="mask18_1_1249" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="1124" height="795">
+<path d="M0.560059 0.850586H1123.08V794.552H0.560059V0.850586Z" fill="white"/>
+</mask>
+<g mask="url(#mask18_1_1249)">
+<path d="M618.682 524.688L622.378 504.152L626.077 524.688H618.682ZM626.32 498.808C626.077 497.596 625.288 496.984 624.136 496.984H620.744C619.592 496.984 618.802 497.596 618.562 498.808L610.924 537.321C610.681 538.718 611.345 539.508 612.681 539.508H614.198C615.35 539.508 616.137 538.902 616.32 537.686L617.773 529.486H626.925L628.381 537.686C628.622 538.902 629.35 539.508 630.561 539.508H632.321C633.654 539.508 634.382 538.718 634.078 537.321L626.32 498.808Z" fill="white"/>
+</g>
+<mask id="mask19_1_1249" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="1124" height="795">
+<path d="M0.560059 0.850586H1123.08V794.552H0.560059V0.850586Z" fill="white"/>
+</mask>
+<g mask="url(#mask19_1_1249)">
+<path d="M664.439 496.984H663.169C661.896 496.984 661.171 497.717 661.171 498.989V526.265L651.107 498.624C650.743 497.533 649.955 496.984 648.801 496.984H646.8C645.471 496.984 644.803 497.717 644.803 498.989V537.502C644.803 538.778 645.471 539.508 646.8 539.508H648.076C649.349 539.508 650.075 538.778 650.075 537.502V509.258L660.439 537.868C660.803 538.96 661.532 539.508 662.684 539.508H664.439C665.775 539.508 666.443 538.778 666.443 537.502V498.989C666.443 497.717 665.775 496.984 664.439 496.984Z" fill="white"/>
+</g>
+<mask id="mask20_1_1249" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="1124" height="795">
+<path d="M0.560059 0.850647H1123.08V794.552H0.560059V0.850647Z" fill="white"/>
+</mask>
+<g mask="url(#mask20_1_1249)">
+<path d="M689.47 496.502H689.35C682.925 496.502 679.046 499.356 679.046 505.49V531.001C679.046 537.444 682.925 539.996 689.35 539.996H689.47C695.898 539.996 699.777 537.384 699.777 531.001V524.381C699.777 523.106 699.109 522.378 697.775 522.378H696.078C694.806 522.378 694.078 523.106 694.078 524.381V529.91C694.078 533.617 692.503 534.953 689.413 534.953C686.319 534.953 684.745 533.617 684.745 529.91V506.585C684.745 502.878 686.319 501.542 689.413 501.542C692.503 501.542 694.078 502.878 694.078 506.585V511.081C694.078 512.357 694.806 513.084 696.078 513.084H697.775C699.109 513.084 699.777 512.357 699.777 511.081V505.49C699.777 499.356 695.898 496.502 689.47 496.502Z" fill="white"/>
+</g>
+<mask id="mask21_1_1249" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="1124" height="795">
+<path d="M0.560059 0.850586H1123.08V794.552H0.560059V0.850586Z" fill="white"/>
+</mask>
+<g mask="url(#mask21_1_1249)">
+<path d="M728.199 534.465H717.835V520.492H726.138C727.471 520.492 728.137 519.765 728.137 518.489V517.395C728.137 516.12 727.471 515.392 726.138 515.392H717.835V502.027H728.015C729.351 502.027 730.017 501.363 730.017 500.024V498.989C730.017 497.716 729.351 496.984 728.015 496.984H714.137C712.803 496.984 712.135 497.716 712.135 498.989V537.503C712.135 538.779 712.803 539.508 714.137 539.508H728.199C729.533 539.508 730.201 538.779 730.201 537.503V536.471C730.201 535.135 729.533 534.465 728.199 534.465Z" fill="white"/>
+</g>
+<mask id="mask22_1_1249" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="1124" height="795">
+<path d="M0.560059 0.850586H1123.08V794.552H0.560059V0.850586Z" fill="white"/>
+</mask>
+<g mask="url(#mask22_1_1249)">
+<path d="M756.442 534.345H746.986V498.989C746.986 497.713 746.258 496.984 744.985 496.984H743.287C741.955 496.984 741.29 497.713 741.29 498.989V537.503C741.29 538.779 741.955 539.508 743.287 539.508H756.442C757.775 539.508 758.443 538.779 758.443 537.503V536.351C758.443 535.072 757.775 534.345 756.442 534.345Z" fill="white"/>
+</g>
+<mask id="mask23_1_1249" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="1124" height="795">
+<path d="M0.560059 0.850586H1123.08V794.552H0.560059V0.850586Z" fill="white"/>
+</mask>
+<g mask="url(#mask23_1_1249)">
+<path d="M778.074 493.646H778.258C779.29 493.646 780.015 493.281 780.683 492.491L784.379 487.877C785.471 486.538 784.863 485.446 783.168 485.446H781.291C780.195 485.446 779.41 485.871 778.926 486.902L776.62 491.335C775.955 492.671 776.56 493.646 778.074 493.646Z" fill="white"/>
+</g>
+<mask id="mask24_1_1249" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="1124" height="795">
+<path d="M0.560059 0.850586H1123.08V794.552H0.560059V0.850586Z" fill="white"/>
+</mask>
+<g mask="url(#mask24_1_1249)">
+<path d="M774.438 524.689L778.137 504.153L781.833 524.689H774.438ZM782.076 498.809C781.833 497.594 781.046 496.985 779.894 496.985H776.5C775.348 496.985 774.558 497.594 774.318 498.809L766.68 537.322C766.436 538.719 767.105 539.509 768.437 539.509H769.954C771.106 539.509 771.896 538.899 772.076 537.685L773.533 529.483H782.684L784.137 537.685C784.378 538.899 785.106 539.509 786.32 539.509H788.08C789.41 539.509 790.138 538.719 789.837 537.322L782.076 498.809Z" fill="white"/>
+</g>
+<mask id="mask25_1_1249" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="1124" height="795">
+<path d="M0.560059 0.850586H1123.08V794.552H0.560059V0.850586Z" fill="white"/>
+</mask>
+<g mask="url(#mask25_1_1249)">
+<path d="M815.774 512.052C815.774 515.816 814.079 517.092 810.926 517.092H806.258V502.027H810.926C814.079 502.027 815.774 503.306 815.774 507.07V512.052ZM816.502 521.224C819.653 519.948 821.474 517.336 821.474 513.084V505.975C821.474 499.72 817.594 496.984 811.17 496.984H802.559C801.226 496.984 800.558 497.715 800.558 498.991V537.504C800.558 538.776 801.226 539.51 802.559 539.51H804.257C805.533 539.51 806.258 538.776 806.258 537.504V522.074H811.227L816.562 537.868C816.926 539.02 817.655 539.51 818.805 539.51H820.502C821.958 539.51 822.623 538.535 822.199 537.199L816.502 521.224Z" fill="white"/>
+</g>
+<mask id="mask26_1_1249" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="1124" height="795">
+<path d="M0.560059 0.850586H1123.08V794.552H0.560059V0.850586Z" fill="white"/>
+</mask>
+<g mask="url(#mask26_1_1249)">
+<path d="M809.653 493.646H811.29C812.38 493.646 813.168 493.221 813.716 492.25L816.502 487.874C817.352 486.538 816.926 485.446 815.533 485.446H814.745C813.653 485.446 812.928 485.81 812.38 486.842L810.501 490.003L808.564 486.842C808.076 485.81 807.29 485.446 806.258 485.446H805.774C804.257 485.446 803.652 486.538 804.501 487.874L807.29 492.25C807.833 493.221 808.564 493.646 809.653 493.646Z" fill="white"/>
+</g>
+</g>
+<defs>
+<clipPath id="clip0_1_1249">
+<rect width="1122.52" height="793.701" fill="white" transform="translate(0.560059 0.850586)"/>
+</clipPath>
+</defs>
+</svg>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Create paragraph snowfall - starts immediately, independent of text animation
+        function createParagraphSnowfall() {
+            const snowfallContainer = document.getElementById('snowfall');
+            const paragraphCount = 120; // Increased to 120 (200% more than 40)
+            
+            for (let i = 0; i < paragraphCount; i++) {
+                const paragraph = document.createElement('div');
+                paragraph.className = 'paragraph-flake';
+                paragraph.textContent = '§';
+                
+                // Random size for depth of field effect (10-30px)
+                const size = Math.random() * 20 + 10;
+                paragraph.style.fontSize = size + 'px';
+                
+                // Blur for bokeh effect - larger = more blurred (further away)
+                const blur = (30 - size) / 5;
+                paragraph.style.filter = `blur(${blur}px)`;
+                
+                // Opacity based on size (smaller/further = more transparent)
+                const opacity = 0.3 + (size / 30) * 0.4;
+                paragraph.style.setProperty('--opacity', opacity);
+                
+                // Random horizontal position
+                const leftPos = Math.random() * 100;
+                paragraph.style.left = leftPos + '%';
+                
+                // Start position - well above viewport
+                const startY = -50 - Math.random() * 100; // -50vh to -150vh
+                paragraph.style.top = startY + 'vh';
+                
+                // Fall distance - must go through entire viewport plus extra
+                const fallDistance = 150 + Math.abs(startY) + Math.random() * 50; // Total distance to fall
+                paragraph.style.setProperty('--fall-distance', fallDistance + 'vh');
+                
+                // Random animation duration (speed) - longer for smoother effect
+                const duration = 15 + Math.random() * 15; // 15-30 seconds
+                paragraph.style.animationDuration = duration + 's';
+                
+                // Shorter delay so paragraphs start falling much earlier
+                const delay = -Math.random() * 20; // 0-8 seconds delay (reduced from 20)
+                paragraph.style.animationDelay = delay + 's';
+                
+                // Random horizontal drift
+                const drift = (Math.random() - 0.5) * 150; // -75 to 75px
+                paragraph.style.setProperty('--drift', drift + 'px');
+                
+                snowfallContainer.appendChild(paragraph);
+            }
+        }
+        
+        // Initialize snowfall immediately when page loads
+        createParagraphSnowfall();
+        
+        // Main text animation - completely independent
+        const text = "Vše nejlepší v roce 2026";
+        const mainTextEl = document.getElementById('mainText');
+        const secondaryContentEl = document.getElementById('secondaryContent');
+        
+        // Split text into words and letters
+        const words = text.split(' ');
+        let allLetters = [];
+        
+        words.forEach((word, wordIndex) => {
+            const wordSpan = document.createElement('span');
+            if (word === '2026') {
+                wordSpan.className = 'word-2026';
+            }
+            
+            for (let char of word) {
+                const letterSpan = document.createElement('span');
+                letterSpan.className = 'letter';
+                letterSpan.textContent = char;
+                wordSpan.appendChild(letterSpan);
+                allLetters.push(letterSpan);
+            }
+            
+            mainTextEl.appendChild(wordSpan);
+            
+            // Add space between words
+            if (wordIndex < words.length - 1) {
+                const space = document.createElement('span');
+                space.className = 'letter';
+                space.innerHTML = ' ';
+                mainTextEl.appendChild(space);
+                allLetters.push(space);
+            }
+        });
+        
+        // Function to create sparks
+        function createSparks(letter) {
+            const rect = letter.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+            
+            const sparkCount = 16;
+            for (let i = 0; i < sparkCount; i++) {
+                const spark = document.createElement('div');
+                spark.className = 'spark';
+                spark.style.left = centerX + 'px';
+                spark.style.top = centerY + 'px';
+                
+                const angle = (Math.PI * 2 * i) / sparkCount;
+                const distance = 30 + Math.random() * 30;
+                const tx = Math.cos(angle) * distance;
+                const ty = Math.sin(angle) * distance;
+                
+                spark.style.setProperty('--tx', tx + 'px');
+                spark.style.setProperty('--ty', ty + 'px');
+                spark.style.animation = `sparkFly ${0.4 + Math.random() * 0.3}s ease-out forwards`;
+                
+                document.body.appendChild(spark);
+                
+                setTimeout(() => spark.remove(), 700);
+            }
+        }
+        
+        // Animate letters one by one
+        let delay = 500;
+        allLetters.forEach((letter, index) => {
+            setTimeout(() => {
+                letter.classList.add('visible');
+                if (letter.textContent.trim() !== '') {
+                    createSparks(letter);
+                }
+                
+                // Check if this is the last letter
+                if (index === allLetters.length - 1) {
+                    setTimeout(() => {
+                        // Flash the 2026 word
+                        const word2026 = document.querySelector('.word-2026');
+                        word2026.classList.add('flash');
+                        
+                        // Show secondary content after flash
+                        setTimeout(() => {
+                            secondaryContentEl.classList.add('visible');
+                        }, 800);
+                    }, 300);
+                }
+            }, delay);
+            delay += 100;
+        });
+    </script>
+</body>
+</html>
