@@ -39,30 +39,33 @@
         }
 
         .paragraph-flake {
-            position: absolute;
-            color: rgba(255, 255, 255, 0.6);
-            font-size: 20px;
-            font-weight: 700;
-            animation: fall linear infinite;
-            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-        }
+    position: absolute;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 20px;
+    font-weight: 700;
+    animation: fall linear infinite;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+    /* startovní pozice hodně nad obrazovkou */
+    top: -30vh;
+}
 
-        @keyframes fall {
-            0% {
-                transform: translateY(-20vh) translateX(0) rotate(0deg);
-                opacity: 0;
-            }
-            5% {
-                opacity: var(--opacity);
-            }
-            95% {
-                opacity: var(--opacity);
-            }
-            100% {
-                transform: translateY(120vh) translateX(var(--drift)) rotate(360deg);
-                opacity: 0;
-            }
-        }
+/* nový fall */
+@keyframes fall {
+    0% {
+        transform: translateY(0) translateX(0) rotate(0deg);
+        opacity: 0;              /* zcela neviditelné */
+    }
+    15% {
+        opacity: var(--opacity); /* teprve zde „vjíždí“ do obrazu */
+    }
+    90% {
+        opacity: var(--opacity); /* většinu času viditelné */
+    }
+    100% {
+        transform: translateY(160vh) translateX(var(--drift)) rotate(360deg);
+        opacity: 0;              /* zmizí hluboko pod obrazovkou */
+    }
+}
 
         /* Content layer */
         .content {
