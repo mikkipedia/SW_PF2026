@@ -36,50 +36,34 @@
             height: 100%;
             pointer-events: none;
             z-index: 1;
+            overflow: hidden;
         }
 
-       .paragraph-flake {
-    position: absolute;
-    color: rgba(255, 255, 255, 0.6);
-    font-size: 20px;
-    font-weight: 700;
-    animation: fall linear infinite;
-    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-}
+        .paragraph-flake {
+            position: absolute;
+            color: rgba(255, 255, 255, 0.6);
+            font-weight: 700;
+            animation: fall linear infinite;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+            will-change: transform, opacity;
+        }
 
-/* finální verze */
-@keyframes fall {
-    0% {
-        /* extrémně vysoko nad obrazovkou, neviditelné */
-        transform: translateY(-120vh) translateX(0) rotate(0deg);
-        opacity: 0;
-    }
-    25% {
-        /* pořád výrazně nad horní hranou, stále neviditelné */
-        transform: translateY(-80vh) translateX(0) rotate(90deg);
-        opacity: 0;
-    }
-    40% {
-        /* těsně nad obrazovkou, začíná fade‑in */
-        transform: translateY(-20vh) translateX(0) rotate(150deg);
-        opacity: calc(var(--opacity) * 0.3);
-    }
-    55% {
-        /* už v obrazu, plná viditelnost */
-        transform: translateY(0) translateX(0) rotate(220deg);
-        opacity: var(--opacity);
-    }
-    90% {
-        /* většinu času v pádu přes celý viewport */
-        transform: translateY(100vh) translateX(var(--drift)) rotate(320deg);
-        opacity: var(--opacity);
-    }
-    100% {
-        /* hluboko pod obrazovkou + fade‑out */
-        transform: translateY(160vh) translateX(var(--drift)) rotate(360deg);
-        opacity: 0;
-    }
-}
+        @keyframes fall {
+            0% {
+                transform: translateY(0) translateX(0) rotate(0deg);
+                opacity: 0;
+            }
+            3% {
+                opacity: var(--opacity);
+            }
+            97% {
+                opacity: var(--opacity);
+            }
+            100% {
+                transform: translateY(var(--fall-distance)) translateX(var(--drift)) rotate(360deg);
+                opacity: 0;
+            }
+        }
 
         /* Content layer */
         .content {
@@ -409,10 +393,10 @@
     </div>
 
     <script>
-        // Create paragraph snowfall
+        // Create paragraph snowfall - starts immediately, independent of text animation
         function createParagraphSnowfall() {
             const snowfallContainer = document.getElementById('snowfall');
-            const paragraphCount = 30; // Number of falling paragraphs
+            const paragraphCount = 40; // Increased count for better coverage
             
             for (let i = 0; i < paragraphCount; i++) {
                 const paragraph = document.createElement('div');
@@ -424,42 +408,51 @@
                 paragraph.style.fontSize = size + 'px';
                 
                 // Blur for bokeh effect - larger = more blurred (further away)
-                const blur = (30 - size) / 5; // Inverse relationship with size
+                const blur = (30 - size) / 5;
                 paragraph.style.filter = `blur(${blur}px)`;
                 
                 // Opacity based on size (smaller/further = more transparent)
-                const opacity = 0.3 + (size / 30) * 0.4; // 0.3-0.7
+                const opacity = 0.3 + (size / 30) * 0.4;
                 paragraph.style.setProperty('--opacity', opacity);
                 
                 // Random horizontal position
-                paragraph.style.left = Math.random() * 100 + '%';
+                const leftPos = Math.random() * 100;
+                paragraph.style.left = leftPos + '%';
                 
-                // Random animation duration (speed)
-                const duration = 8 + Math.random() * 12; // 8-20 seconds
+                // Start position - well above viewport
+                const startY = -50 - Math.random() * 100; // -50vh to -150vh
+                paragraph.style.top = startY + 'vh';
+                
+                // Fall distance - must go through entire viewport plus extra
+                const fallDistance = 150 + Math.abs(startY) + Math.random() * 50; // Total distance to fall
+                paragraph.style.setProperty('--fall-distance', fallDistance + 'vh');
+                
+                // Random animation duration (speed) - longer for smoother effect
+                const duration = 15 + Math.random() * 15; // 15-30 seconds
                 paragraph.style.animationDuration = duration + 's';
                 
-                // Random delay
-                paragraph.style.animationDelay = Math.random() * 5 + 's';
+                // Stagger the start times across a wider range
+                const delay = Math.random() * 20; // 0-20 seconds delay
+                paragraph.style.animationDelay = delay + 's';
                 
                 // Random horizontal drift
-                const drift = (Math.random() - 0.5) * 100; // -50 to 50px
+                const drift = (Math.random() - 0.5) * 150; // -75 to 75px
                 paragraph.style.setProperty('--drift', drift + 'px');
                 
                 snowfallContainer.appendChild(paragraph);
             }
         }
         
-        // Initialize snowfall
+        // Initialize snowfall immediately when page loads
         createParagraphSnowfall();
         
-        // Main text animation
+        // Main text animation - completely independent
         const text = "Vše nejlepší v roce 2026";
         const mainTextEl = document.getElementById('mainText');
         const secondaryContentEl = document.getElementById('secondaryContent');
         
         // Split text into words and letters
         const words = text.split(' ');
-        let letterIndex = 0;
         let allLetters = [];
         
         words.forEach((word, wordIndex) => {
@@ -482,7 +475,7 @@
             if (wordIndex < words.length - 1) {
                 const space = document.createElement('span');
                 space.className = 'letter';
-                space.innerHTML = '&nbsp;';
+                space.innerHTML = ' ';
                 mainTextEl.appendChild(space);
                 allLetters.push(space);
             }
@@ -525,7 +518,7 @@
                     createSparks(letter);
                 }
                 
-                // Check if this is the last letter of 2026
+                // Check if this is the last letter
                 if (index === allLetters.length - 1) {
                     setTimeout(() => {
                         // Flash the 2026 word
