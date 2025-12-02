@@ -792,3 +792,16 @@
     window.addEventListener('keydown', (e) => {
       if (e.code === 'Space' || e.code === 'Enter') restart();
     });
+
+    // If font loads late, rebuild keeps centers accurate
+    document.fonts && document.fonts.ready && document.fonts.ready.then(() => {
+      // rebuild only if animation hasn't progressed too far
+      // (safe + avoids jumps)
+      if (!prefersReducedMotion) {
+        // refresh particle field a bit (optional)
+        makeBg();
+      }
+    });
+  </script>
+</body>
+</html>
