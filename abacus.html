@@ -49,10 +49,18 @@
 
         @keyframes fall {
             0% {
-                transform: translateY(-10vh) translateX(0) rotate(0deg);
+                transform: translateY(-20vh) translateX(0) rotate(0deg);
+                opacity: 0;
+            }
+            5% {
+                opacity: var(--opacity);
+            }
+            95% {
+                opacity: var(--opacity);
             }
             100% {
-                transform: translateY(110vh) translateX(var(--drift)) rotate(360deg);
+                transform: translateY(120vh) translateX(var(--drift)) rotate(360deg);
+                opacity: 0;
             }
         }
 
@@ -394,17 +402,17 @@
                 paragraph.className = 'paragraph-flake';
                 paragraph.textContent = '§';
                 
-                // Random size for depth of field effect
-                const size = Math.random() * 30 + 15; // 15-45px
+                // Random size for depth of field effect (10-30px)
+                const size = Math.random() * 20 + 10;
                 paragraph.style.fontSize = size + 'px';
                 
                 // Blur for bokeh effect - larger = more blurred (further away)
-                const blur = (45 - size) / 8; // Inverse relationship with size
+                const blur = (30 - size) / 5; // Inverse relationship with size
                 paragraph.style.filter = `blur(${blur}px)`;
                 
                 // Opacity based on size (smaller/further = more transparent)
-                const opacity = 0.3 + (size / 45) * 0.4; // 0.3-0.7
-                paragraph.style.opacity = opacity;
+                const opacity = 0.3 + (size / 30) * 0.4; // 0.3-0.7
+                paragraph.style.setProperty('--opacity', opacity);
                 
                 // Random horizontal position
                 paragraph.style.left = Math.random() * 100 + '%';
