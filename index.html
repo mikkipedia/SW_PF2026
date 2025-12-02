@@ -1,290 +1,399 @@
 <!DOCTYPE html>
-<html lang="cs">
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <title>PF 2026 – Spring Walk</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="PF 2026 – Nenecháme vás zapadnout. Spring Walk, advokátní kancelář." />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gunpowder Text Animation</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #1a1a1a; /* Dark ground */
+            color: #eee;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            overflow: hidden;
+        }
 
-  <style>
-    :root {
-      --bg-start: #DD4A2A;
-      --bg-end:   #183A5C;
-      --accent-dark: #434343;
-      --accent-light: #FFFFFF;
-    }
+        #controls {
+            position: absolute;
+            top: 20px;
+            z-index: 10;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 10px 20px;
+            border-radius: 30px;
+            border: 1px solid #444;
+            backdrop-filter: blur(5px);
+        }
 
-    * {
-      box-sizing: border-box;
-    }
+        select {
+            background: #333;
+            color: white;
+            border: 1px solid #555;
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-size: 16px;
+            outline: none;
+            cursor: pointer;
+        }
 
-    html, body {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-    }
+        canvas {
+            box-shadow: 0 0 50px rgba(0,0,0,0.5);
+            background-color: #111; /* Slightly darker canvas background */
+            border-radius: 4px;
+        }
 
-    body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-      background:
-        radial-gradient(circle at top, rgba(255,255,255,0.08), transparent 55%),
-        linear-gradient(145deg, var(--bg-start), var(--bg-end));
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 16px;
-      color: var(--accent-light);
-    }
+        /* The Flash Effect Overlay */
+        #flash-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: white;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 20;
+            transition: opacity 0.1s ease-out;
+        }
+        
+        .flash-active {
+            animation: flashAnim 1.5s forwards;
+        }
 
-    .pf-wrapper {
-      position: relative;
-      max-width: 960px;
-      width: 100%;
-      aspect-ratio: 16 / 9;
-      border-radius: 32px;
-      overflow: hidden;
-      border: 1px solid rgba(255,255,255,0.25);
-      box-shadow: 0 24px 60px rgba(0,0,0,0.45);
-      background: radial-gradient(circle at top, rgba(255,255,255,0.05), transparent 60%);
-    }
-
-    .pf-inner {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      padding: 28px 32px 32px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-    }
-
-    @media (max-width: 640px) {
-      .pf-inner {
-        padding: 20px 18px 22px;
-      }
-    }
-
-    /* horní řádek – značka + PF */
-
-    .top-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 12px;
-      font-size: 0.85rem;
-      text-transform: uppercase;
-      letter-spacing: 0.16em;
-      color: rgba(255,255,255,0.9);
-    }
-
-    .brand-small {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-      max-width: 60%;
-    }
-
-    .brand-small__name {
-      font-weight: 600;
-    }
-
-    .brand-small__sub {
-      font-size: 0.75rem;
-      opacity: 0.9;
-    }
-
-    .pf-label {
-      text-align: right;
-      white-space: nowrap;
-    }
-
-    .pf-label span {
-      font-weight: 600;
-    }
-
-    @media (max-width: 520px) {
-      .top-row {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-      .pf-label {
-        text-align: left;
-      }
-    }
-
-    /* hlavní text */
-
-    .headline-wrap {
-      text-align: center;
-      margin-top: 8px;
-    }
-
-    .headline-main {
-      font-size: clamp(1.7rem, 3.4vw, 2.3rem);
-      font-weight: 500;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-    }
-
-    .headline-sub {
-      margin-top: 12px;
-      font-size: 0.9rem;
-      letter-spacing: 0.18em;
-      text-transform: uppercase;
-      opacity: 0.9;
-    }
-
-    /* logo blok dole – „štít“ */
-
-    .bottom-area {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 12px;
-      margin-top: 8px;
-    }
-
-    .logo-zone {
-      position: relative;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      width: 100%;
-      padding-bottom: 6px;
-    }
-
-    .shield-ring {
-      position: absolute;
-      width: min(420px, 82vw);
-      aspect-ratio: 16 / 6;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,0.45);
-      box-shadow:
-        0 0 0 1px rgba(0,0,0,0.25),
-        0 0 25px rgba(0,0,0,0.4);
-      opacity: 0.8;
-      animation: pulseShield 4s ease-in-out infinite;
-    }
-
-    @keyframes pulseShield {
-      0%   { transform: scale(1);   opacity: 0.7; }
-      50%  { transform: scale(1.04); opacity: 0.95; }
-      100% { transform: scale(1);   opacity: 0.7; }
-    }
-
-    .logo-block {
-      position: relative;
-      width: min(380px, 75vw);
-      aspect-ratio: 1124 / 795;
-      border-radius: 26px;
-      background: var(--accent-dark);
-      box-shadow:
-        0 10px 30px rgba(0,0,0,0.7),
-        0 0 0 1px rgba(0,0,0,0.35);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 8px;
-    }
-
-    .logo-block-inner {
-      width: 100%;
-      height: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .logo-block svg {
-      width: 100%;
-      height: 100%;
-      display: block;
-    }
-
-    /* pro jistotu – vše uvnitř loga bíle */
-    .logo-block svg path {
-      fill: #FFFFFF;
-    }
-
-    .bottom-caption {
-      font-size: 0.75rem;
-      color: rgba(255,255,255,0.9);
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      text-align: center;
-    }
-
-  </style>
+        @keyframes flashAnim {
+            0% { opacity: 0; }
+            10% { opacity: 0.8; background: #ffaa00; } /* Fiery flash */
+            100% { opacity: 0; }
+        }
+    </style>
 </head>
 <body>
-  <div class="pf-wrapper">
-    <div class="pf-inner">
-      <!-- horní řádek -->
-      <div class="top-row">
-        <div class="brand-small">
-          <div class="brand-small__name">Spring Walk</div>
-          <div class="brand-small__sub">advokátní kancelář</div>
-        </div>
-        <div class="pf-label">
-          PF&nbsp;<span>2026</span>
-        </div>
-      </div>
 
-      <!-- headline -->
-      <div class="headline-wrap">
-        <div class="headline-main">
-          Nenecháme vás zapadnout
-        </div>
-        <div class="headline-sub">
-          právní jistota i v&nbsp;novém roce
-        </div>
-      </div>
-
-      <!-- logo + štít -->
-      <div class="bottom-area">
-        <div class="logo-zone">
-          <div class="shield-ring"></div>
-          <div class="logo-block">
-            <div class="logo-block-inner">
-              <!-- TVÉ SVG LOGO – komplet, beze změn -->
-              <svg width="1124" height="795" viewBox="0 0 1124 795" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <g clip-path="url(#clip0_1_1249)">
-                <mask id="mask0_1_1249" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="1124" height="795">
-                <path d="M0.560059 0.850586H1123.08V794.552H0.560059V0.850586Z" fill="white"/>
-                </mask>
-                <g mask="url(#mask0_1_1249)">
-                <path d="M554.923 336.413C554.923 339.423 553.353 341.143 550.207 341.143H546.205C543.198 341.143 541.483 339.423 541.483 336.413V329.824C541.483 320.941 537.481 317.932 530.045 317.932C522.614 317.932 518.609 320.941 518.609 329.824V384.843C518.609 393.728 522.614 396.735 530.045 396.735C537.481 396.735 541.483 393.728 541.483 384.843V368.077H534.191C531.189 368.077 529.475 366.503 529.475 363.352V361.347C529.475 358.191 531.189 356.617 534.191 356.617H550.207C553.353 356.617 554.923 358.191 554.923 361.347V387.421C554.923 402.465 545.771 408.627 530.619 408.627H529.475C514.321 408.627 505.169 402.609 505.169 387.421V327.245C505.169 312.775 514.321 306.04 529.475 306.04H530.619C545.771 306.04 554.923 312.775 554.923 327.245V336.413ZM475.441 402.755C475.441 405.761 473.863 407.48 470.718 407.48H466.574C463.857 407.48 462.142 406.189 461.283 403.613L436.835 336.129V402.755C436.835 405.761 435.121 407.48 432.117 407.48H429.117C425.969 407.48 424.398 405.761 424.398 402.755V311.915C424.398 308.905 425.969 307.185 429.117 307.185H433.833C436.55 307.185 438.41 308.473 439.267 311.055L462.999 376.248V311.915C462.999 308.905 464.715 307.185 467.718 307.185H470.718C473.863 307.185 475.441 308.905 475.441 311.915V402.755ZM393.519 402.755C393.519 405.761 391.805 407.48 388.801 407.48H384.802C381.654 407.48 380.083 405.761 380.083 402.755V311.915C380.083 308.905 381.654 307.185 384.802 307.185H388.801C391.805 307.185 393.519 308.905 393.519 311.915V402.755ZM347.777 407.48H343.774C341.057 407.48 339.339 406.337 338.485 403.613L325.902 366.361H314.181V402.755C314.181 405.761 312.465 407.48 309.462 407.48H305.459C302.314 407.48 300.741 405.761 300.741 402.755V311.915C300.741 308.904 302.314 307.185 305.459 307.185H325.761C340.915 307.185 350.065 313.633 350.065 328.393V345.156C350.065 355.184 345.775 361.345 338.339 364.352L351.779 402.036C352.782 405.188 351.207 407.48 347.777 407.48ZM274.15 346.3C274.15 361.057 265.002 367.508 249.846 367.508H238.266V402.756C238.266 405.763 236.551 407.481 233.547 407.481H229.545C226.401 407.481 224.826 405.763 224.826 402.756V311.916C224.826 308.907 226.401 307.187 229.545 307.187H249.846C265.002 307.187 274.15 313.632 274.15 328.392V346.3ZM196.807 387.709C196.807 402.756 188.089 408.628 172.93 408.628H172.647C157.493 408.628 148.769 402.897 148.769 387.709V375.387C148.769 372.376 150.345 370.66 153.49 370.66H157.206C160.351 370.66 161.922 372.376 161.922 375.387V385.417C161.922 393.295 165.783 396.877 172.789 396.877C179.795 396.877 183.657 393.295 183.657 385.417V377.537C183.657 371.517 181.51 368.941 175.649 365.641L162.779 358.479C153.631 353.177 148.769 348.88 148.769 339.283V326.673C148.769 312.2 158.778 306.039 172.503 306.039H172.789C186.513 306.039 196.521 312.2 196.521 326.673V337.851C196.521 340.857 194.95 342.576 191.802 342.576H188.089C184.945 342.576 183.367 340.857 183.367 337.851V328.965C183.367 320.943 179.509 317.788 172.647 317.788C165.783 317.788 161.922 320.943 161.922 328.965V335.841C161.922 341.861 164.067 344.008 169.789 347.303L182.798 354.468C191.375 359.339 196.807 364.209 196.807 373.812V387.709ZM619.322 457.677L584.942 254.048H96.9647V457.677H615.005H619.322Z" fill="white"/>
-                </g>
-                <mask id="mask1_1_1249" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="1124" height="795">
-                <path d="M0.560059 0.850647H1123.08V794.552H0.560059V0.850647Z" fill="white"/>
-                </mask>
-                <g mask="url(#mask1_1_1249)">
-                <path d="M325.186 319.077H314.18V354.611H325.186C332.622 354.611 336.624 351.601 336.624 342.719V330.969C336.624 322.087 332.622 319.077 325.186 319.077Z" fill="white"/>
-                </g>
-                <mask id="mask2_1_1249" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="1124" height="795">
-                <path d="M0.560059 0.850647H1123.08V794.552H0.560059V0.850647Z" fill="white"/>
-                </mask>
-                <g mask="url(#mask2_1_1249)">
-                <path d="M249.272 319.079H238.266V355.472H249.272C256.708 355.472 260.713 352.461 260.713 343.721V330.971C260.713 322.088 256.708 319.079 249.272 319.079Z" fill="white"/>
-                </g>
-                <!-- ... (zbytek tvého SVG – můžeš ponechat beze změny) ... -->
-                </g>
-                <defs>
-                <clipPath id="clip0_1_1249">
-                <rect width="1122.52" height="793.701" fill="white" transform="translate(0.560059 0.850586)"/>
-                </clipPath>
-                </defs>
-              </svg>
-              <!-- konec SVG -->
-            </div>
-          </div>
-        </div>
-
-        <div class="bottom-caption">
-          PF 2026 · NENECHÁME VÁS ZAPADNOUT
-        </div>
-      </div>
+    <div id="controls">
+        <label for="wordSelect">Ignite: </label>
+        <select id="wordSelect">
+            <option value="Gemini">Gemini</option>
+            <option value="ChatGPT">ChatGPT</option>
+            <option value="Claude">Claude</option>
+            <option value="Grok">Grok</option>
+        </select>
     </div>
-  </div>
+
+    <div id="flash-overlay"></div>
+    <canvas id="canvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d', { willReadFrequently: true });
+        const flashOverlay = document.getElementById('flash-overlay');
+        const select = document.getElementById('wordSelect');
+
+        // Configuration
+        const config = {
+            textScale: 0.18, // Size of text relative to screen
+            gunpowderColor: '#555555',
+            charredColor: '#0a0a0a',
+            fireColor: '#ff6600',
+            coreColor: '#ffffcc',
+            burnSpeed: 4, // Iterations per frame
+            sparkChance: 0.3
+        };
+
+        // State
+        let particles = [];
+        let grid = []; // 2D array storing pixel states: 0=empty, 1=powder, 2=burning, 3=charred
+        let burnQueue = []; // Queue of pixels currently on fire
+        let width, height;
+        let animationId;
+        let isFinished = false;
+
+        // Resize handling
+        function resize() {
+            width = window.innerWidth;
+            height = window.innerHeight;
+            canvas.width = width;
+            canvas.height = height;
+        }
+
+        // --- Particle System for Sparks ---
+        class Spark {
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                const angle = Math.random() * Math.PI * 2;
+                const speed = Math.random() * 2 + 1;
+                this.vx = Math.cos(angle) * speed;
+                this.vy = Math.sin(angle) * speed;
+                this.life = 1.0;
+                this.decay = Math.random() * 0.03 + 0.02;
+                this.size = Math.random() * 2 + 1;
+            }
+
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                this.vy += 0.1; // Gravity
+                this.life -= this.decay;
+                // Friction
+                this.vx *= 0.95;
+                this.vy *= 0.95;
+            }
+
+            draw(ctx) {
+                if (this.life <= 0) return;
+                ctx.globalAlpha = this.life;
+                ctx.fillStyle = `rgba(255, ${Math.floor(this.life * 200)}, 50, 1)`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size * this.life, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.globalAlpha = 1;
+            }
+        }
+
+        // --- Initialization ---
+
+        function init(word) {
+            cancelAnimationFrame(animationId);
+            resize();
+            isFinished = false;
+            flashOverlay.className = '';
+            particles = [];
+            burnQueue = [];
+            
+            // 1. Draw Text to get shapes
+            ctx.fillStyle = '#000';
+            ctx.fillRect(0, 0, width, height);
+            
+            ctx.font = `bold ${width * config.textScale}px "Courier New", monospace`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillStyle = '#fff'; // Temporary white to read pixels
+            ctx.fillText(word, width / 2, height / 2);
+
+            // 2. Read pixels to create the "Gunpowder Grid"
+            // We use a lower resolution grid for performance logic, but map to screen pixels
+            const imgData = ctx.getImageData(0, 0, width, height);
+            const data = imgData.data;
+            grid = new Int8Array(width * height).fill(0); // 0: Empty, 1: Powder, 2: Fire, 3: Charred
+
+            let startPixel = -1;
+
+            // Scan to build grid
+            for (let y = 0; y < height; y++) {
+                for (let x = 0; x < width; x++) {
+                    const index = (y * width + x) * 4;
+                    // If pixel is white (part of text)
+                    if (data[index] > 50) {
+                        grid[y * width + x] = 1; // Mark as Gunpowder
+                        
+                        // Find the starting point (left-most pixel of the first letter)
+                        if (startPixel === -1) {
+                            startPixel = y * width + x;
+                        }
+                    }
+                }
+            }
+
+            // 3. Ignite the start
+            if (startPixel !== -1) {
+                burnQueue.push(startPixel);
+                grid[startPixel] = 2; // Set to burning
+            }
+
+            // Clear canvas for the actual animation
+            ctx.clearRect(0,0, width, height);
+            
+            loop();
+        }
+
+        // --- The Burn Logic (Flood Fill) ---
+        function updateBurn() {
+            // Process the burn queue
+            // We process multiple pixels per frame to speed up the burn
+            let newSparks = [];
+            
+            // If queue is empty and we started, we are done
+            if (burnQueue.length === 0 && !isFinished) {
+                triggerFinale();
+                return;
+            }
+
+            // We iterate a limited amount to control speed
+            let loops = Math.min(burnQueue.length, 200); 
+            
+            // Randomize index access slightly to make fire look organic
+            for(let i = 0; i < loops; i++) {
+                // Get a pixel from the "fire front"
+                // Using shift() makes it strictly BFS (smooth wave). 
+                // Random splicing makes it crackle. Let's mix.
+                let indexIdx = Math.floor(Math.random() * Math.min(burnQueue.length, 20));
+                let pixelIndex = burnQueue[indexIdx];
+                
+                // Remove this pixel from queue, it is now burnt
+                burnQueue.splice(indexIdx, 1);
+                
+                grid[pixelIndex] = 3; // Mark as charred
+
+                // Coordinate conversion
+                let px = pixelIndex % width;
+                let py = Math.floor(pixelIndex / width);
+
+                // Chance to emit spark
+                if (Math.random() < config.sparkChance) {
+                    newSparks.push(new Spark(px, py));
+                }
+
+                // Check Neighbors (Up, Down, Left, Right)
+                const neighbors = [
+                    pixelIndex + 1,        // Right
+                    pixelIndex - 1,        // Left
+                    pixelIndex + width,    // Down
+                    pixelIndex - width,    // Up
+                    pixelIndex + width + 1, // Diag
+                    pixelIndex - width - 1
+                ];
+
+                for (let n of neighbors) {
+                    if (n >= 0 && n < grid.length) {
+                        if (grid[n] === 1) { // If Gunpowder
+                            grid[n] = 2; // Set to Burning
+                            burnQueue.push(n);
+                        }
+                    }
+                }
+            }
+
+            particles.push(...newSparks);
+        }
+
+        function triggerFinale() {
+            isFinished = true;
+            flashOverlay.classList.add('flash-active');
+            
+            // Spawn a burst of particles over the whole text
+            for(let y=0; y<height; y+=10) {
+                for(let x=0; x<width; x+=10) {
+                     if (grid[y * width + x] === 3) { // If charred
+                         if(Math.random() > 0.8) particles.push(new Spark(x, y));
+                     }
+                }
+            }
+        }
+
+        // --- Rendering ---
+        function draw() {
+            // Fade out background slightly for trail effect on particles
+            ctx.fillStyle = 'rgba(26, 26, 26, 0.4)';
+            ctx.fillRect(0, 0, width, height);
+
+            // Draw Gunpowder and Charred Text
+            // Note: iterating full pixel grid every frame is heavy. 
+            // Optimization: We only draw the updates usually, but here we redraw active areas.
+            
+            const imageData = ctx.getImageData(0,0, width, height);
+            const data = imageData.data;
+
+            // To optimize: We will only manually draw the text pixels onto the buffer
+            // However, direct pixel manipulation is fastest here given the grid system.
+            
+            // Create a temporary buffer for the text layer
+            // Actually, let's just use fillRect for valid pixels to allow context blending for glow
+            
+            // Optimization: Only draw the FIRE. The Gunpowder and Charred stuff can be static?
+            // No, the char replaces the gunpowder.
+        }
+
+        // Optimized Render Loop
+        function loop() {
+            updateBurn();
+
+            // Clear screen
+            ctx.fillStyle = '#1a1a1a';
+            ctx.fillRect(0, 0, width, height);
+
+            // 1. Draw Static Text State (Gunpowder vs Charred)
+            // We iterate the grid. To save performance, in a real engine we'd cache this.
+            // For this demo, we will use a "grainy" aesthetic.
+            
+            const imgData = ctx.createImageData(width, height);
+            const buf = new Uint32Array(imgData.data.buffer);
+            
+            // Colors in ABGR format (little endian)
+            const colGunpowder = 0xFF555555; // Gray
+            const colCharred = 0xFF000000;   // Black
+            const colFire = 0xFF00AAFF;      // Orange/Gold
+            
+            for (let i = 0; i < grid.length; i++) {
+                if (grid[i] === 1) {
+                    // Gunpowder with noise
+                    if ((i * 1234) % 7 === 0) buf[i] = colGunpowder; 
+                } else if (grid[i] === 3) {
+                    // Charred
+                    buf[i] = colCharred;
+                } else if (grid[i] === 2) {
+                    // Burning (Active Front)
+                    buf[i] = colFire;
+                }
+            }
+
+            ctx.putImageData(imgData, 0, 0);
+
+            // 2. Add Glow to Burning areas
+            // We identify the center of the burn for a glow gradient
+            if (burnQueue.length > 0) {
+                // Find average position of current fire
+                let avgX = 0, avgY = 0;
+                let count = 0;
+                // Sample every 10th fire pixel to save calc
+                for(let i=0; i<burnQueue.length; i+=5) {
+                    let idx = burnQueue[i];
+                    avgX += idx % width;
+                    avgY += Math.floor(idx / width);
+                    count++;
+                }
+                if (count > 0) {
+                    avgX /= count;
+                    avgY /= count;
+                    
+                    // Draw Glow
+                    const gradient = ctx.createRadialGradient(avgX, avgY, 5, avgX, avgY, 60);
+                    gradient.addColorStop(0, 'rgba(255, 150, 0, 1)');
+                    gradient.addColorStop(0.4, 'rgba(255, 60, 0, 0.5)');
+                    gradient.addColorStop(1, 'rgba(255, 60, 0, 0)');
+                    ctx.fillStyle = gradient;
+                    ctx.globalCompositeOperation = 'lighter';
+                    ctx.beginPath();
+                    ctx.arc(avgX, avgY, 60, 0, Math.PI*2);
+                    ctx.fill();
+                    ctx.globalCompositeOperation = 'source-over';
+                }
+            }
+
+            // 3. Update and Draw Sparks
+            ctx.globalCompositeOperation = 'lighter';
+            for (let i = particles.length - 1; i >= 0; i--) {
+                const p = particles[i];
+                p.update();
+                p.draw(ctx);
+                if (p.life <= 0) particles.splice(i, 1);
+            }
+            ctx.globalCompositeOperation = 'source-over';
+
+            animationId = requestAnimationFrame(loop);
+        }
+
+        // Start
+        select.addEventListener('change', (e) => init(e.target.value));
+        window.addEventListener('resize', () => init(select.value));
+        
+        // Initial kick
+        init(select.value);
+
+    </script>
 </body>
 </html>
