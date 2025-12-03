@@ -3,392 +3,316 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Novoroční přání 2026</title>
+    <title>Novoroční přání 2026 - Spring Walk</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;700;800&display=swap" rel="stylesheet">
     <style>
-    * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    body {
-    width: 100vw;
-    height: 100vh;
-    background: linear-gradient(135deg, #593146 0%, #28324f 100%);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
-    font-family: 'Nunito Sans', sans-serif;
-    position: relative;
-    }
+        body {
+            font-family: 'Nunito Sans', sans-serif;
+            background: linear-gradient(135deg, #593146 0%, #28324f 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
 
-    /* Snowfall container */
-    .snowfall {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    z-index: 1;
-    overflow: hidden;
-    }
+        /* Snowfall container */
+        #snowfall {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+        }
 
-    .paragraph-flake {
-    position: absolute;
-    color: rgba(255, 255, 255, 0.6);
-    font-weight: 700;
-    animation: fall linear infinite;
-    text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
-    will-change: transform, opacity;
-    }
+        .paragraph-flake {
+            position: absolute;
+            color: rgba(255, 255, 255, 0.8);
+            font-weight: 700;
+            pointer-events: none;
+            will-change: transform, opacity;
+        }
 
-    @keyframes fall {
-    0% {
-    transform: translateY(0) translateX(0) rotate(0deg);
-    opacity: 0;
-    }
-    3% {
-    opacity: var(--opacity);
-    }
-    97% {
-    opacity: var(--opacity);
-    }
-    100% {
-    transform: translateY(var(--fall-distance)) translateX(var(--drift)) rotate(360deg);
-    opacity: 0;
-    }
-    }
+        @keyframes fall {
+            0% {
+                opacity: 0;
+            }
+            10% {
+                opacity: var(--opacity);
+            }
+            90% {
+                opacity: var(--opacity);
+            }
+            100% {
+                opacity: 0;
+            }
+        }
 
-    /* Content layer */
-    .content {
-    position: relative;
-    z-index: 10;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    }
+        /* Main content */
+        .container {
+            text-align: center;
+            color: white;
+            z-index: 10;
+            position: relative;
+            padding: 20px;
+        }
 
-    .main-text {
-    font-size: 4rem;
-    font-weight: 800;
-    color: white;
-    text-align: center;
-    position: relative;
-    margin-bottom: 3rem;
-    letter-spacing: 0.01em;
-    }
+        .main-text {
+            font-size: clamp(2rem, 8vw, 5rem);
+            font-weight: 800;
+            margin-bottom: 2rem;
+            /* ŘÁDEK 77: KERNING (letter-spacing) - změň hodnotu podle sebe */
+            letter-spacing: 0.05em;
+            position: relative;
+            display: inline-block;
+        }
 
-    .letter {
-    display: inline-block;
-    opacity: 0;
-    position: relative;
-    }
+        .letter {
+            display: inline-block;
+            opacity: 0;
+            position: relative;
+        }
 
-    .letter.visible {
-    animation: sparkleIn 0.6s forwards;
-    }
+        .spark {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: radial-gradient(circle, #fff, #ffd700);
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 0;
+        }
 
-    @keyframes sparkleIn {
-    0% {
-    opacity: 0;
-    transform: scale(0.5);
-    filter: brightness(3) drop-shadow(0 0 20px #87ceeb);
-    }
-    50% {
-    opacity: 1;
-    filter: brightness(2) drop-shadow(0 0 30px #87ceeb) drop-shadow(0 0 40px silver);
-    }
-    100% {
-    opacity: 1;
-    transform: scale(1);
-    filter: brightness(1) drop-shadow(0 0 5px rgba(135, 206, 235, 0.5));
-    }
-    }
+        .year-text {
+            font-size: clamp(3rem, 12vw, 8rem);
+            font-weight: 800;
+            background: linear-gradient(45deg, #ffd700, #ffed4e, #ff6b6b, #ffd700);
+            background-size: 300% 300%;
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            opacity: 0;
+            margin: 1rem 0;
+            animation: gradientShift 3s ease infinite;
+        }
 
-    .spark {
-    position: absolute;
-    width: 3px;
-    height: 3px;
-    background: silver;
-    border-radius: 50%;
-    pointer-events: none;
-    box-shadow: 0 0 10px #87ceeb, 0 0 20px silver;
-    z-index: 100;
-    }
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
 
-    @keyframes sparkFly {
-    0% {
-    transform: translate(0, 0) scale(1);
-    opacity: 1;
-    }
-    100% {
-    transform: translate(var(--tx), var(--ty)) scale(0);
-    opacity: 0;
-    }
-    }
+        .subtitle {
+            font-size: clamp(1.2rem, 4vw, 2rem);
+            font-weight: 400;
+            margin-top: 2rem;
+            opacity: 0;
+        }
 
-    .word-2026 {
-    display: inline-block;
-    }
+        .logo-container {
+            margin-top: 3rem;
+            opacity: 0;
+        }
 
-    .word-2026.flash {
-    animation: fireFlash 0.8s ease-out;
-    }
+        .logo-container svg {
+            /* ŘÁDEK 138: VELIKOST LOGA - změň scale() hodnotu (1.25 = 125%, 1.5 = 150%, atd.) */
+            transform: scale(1.25);
+            max-width: 300px;
+            height: auto;
+        }
 
-    @keyframes fireFlash {
-    0%, 100% {
-    filter: brightness(1) drop-shadow(0 0 5px rgba(135, 206, 235, 0.5));
-    }
-    25% {
-    filter: brightness(3) drop-shadow(0 0 40px #ff6600) drop-shadow(0 0 60px #ff3300);
-    color: #ffaa00;
-    }
-    50% {
-    filter: brightness(4) drop-shadow(0 0 50px #ff3300) drop-shadow(0 0 70px #ff6600);
-    color: #ff6600;
-    }
-    75% {
-    filter: brightness(2) drop-shadow(0 0 30px #ff6600);
-    color: #ffcc00;
-    }
-    }
-
-    .secondary-content {
-    opacity: 0;
-    text-align: center;
-    }
-
-    .secondary-content.visible {
-    animation: fadeIn 1.5s forwards;
-    }
-
-    @keyframes fadeIn {
-    to {
-    opacity: 1;
-    }
-    }
-
-    .secondary-text {
-    font-size: 2rem;
-    font-weight: 700;
-    color: white;
-    margin-bottom: 2rem;
-    letter-spacing: 0.05em;
-    }
-
-    .logo-container {
-    width: 400px;
-    height: auto;
-    margin-bottom: 1rem;
-    }
-
-    .logo-container svg {
-    width: 100%;
-    height: auto;
-    filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.3));
-    }
-
-    .tagline {
-    font-size: 1.3rem;
-    font-weight: 400;
-    color: rgba(255, 255, 255, 0.9);
-    letter-spacing: 0.03em;
-    }
-
-    @media (max-width: 768px) {
-    .main-text {
-    font-size: 2rem;
-    }
-    .secondary-text {
-    font-size: 1.5rem;
-    }
-    .logo-container {
-    width: 280px;
-    }
-    .tagline {
-    font-size: 1rem;
-    }
-    }
+        @media (max-width: 768px) {
+            .logo-container svg {
+                max-width: 200px;
+            }
+        }
     </style>
 </head>
 <body>
     <!-- Snowfall background -->
-    <div class="snowfall" id="snowfall"></div>
+    <div id="snowfall"></div>
 
     <!-- Main content -->
-    <div class="content">
-    <div class="main-text" id="mainText"></div>
-    <div class="secondary-content" id="secondaryContent">
-    <div class="secondary-text">Jsme zde s vámi</div>
-    <div class="logo-container">
-    <svg width="1124" height="795" viewBox="0 0 1124 795" fill="none" xmlns="http://www.w3.org/2000/svg">
-<mask id="mask0_1_1359" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="1124" height="795">
-<path d="M0.560059 0.850647H1123.08V794.552H0.560059V0.850647Z" fill="white"/>
-</mask>
-<g mask="url(#mask0_1_1359)">
-<path d="M553.93 378.12C553.93 381.129 552.36 382.849 549.214 382.849H545.212C542.206 382.849 540.49 381.129 540.49 378.12V371.531C540.49 362.648 536.488 359.639 529.052 359.639C521.621 359.639 517.616 362.648 517.616 371.531V426.549C517.616 435.435 521.621 438.441 529.052 438.441C536.488 438.441 540.49 435.435 540.49 426.549V409.784H533.198C530.196 409.784 528.482 408.209 528.482 405.059V403.052C528.482 399.897 530.196 398.324 533.198 398.324H549.214C552.36 398.324 553.93 399.897 553.93 403.052V429.128C553.93 444.172 544.778 450.333 529.626 450.333H528.482C513.328 450.333 504.176 444.316 504.176 429.128V368.952C504.176 354.481 513.328 347.747 528.482 347.747H529.626C544.778 347.747 553.93 354.481 553.93 368.952V378.12ZM474.448 444.461C474.448 447.468 472.87 449.187 469.725 449.187H465.581C462.864 449.187 461.149 447.896 460.29 445.32L435.842 377.836V444.461C435.842 447.468 434.128 449.187 431.124 449.187H428.124C424.976 449.187 423.405 447.468 423.405 444.461V353.621C423.405 350.612 424.976 348.892 428.124 348.892H432.84C435.557 348.892 437.417 350.18 438.274 352.761L462.006 417.953V353.621C462.006 350.612 463.722 348.892 466.725 348.892H469.725C472.87 348.892 474.448 350.612 474.448 353.621V444.461ZM392.526 444.461C392.526 447.468 390.812 449.187 387.808 449.187H383.809C380.661 449.187 379.09 447.468 379.09 444.461V353.621C379.09 350.612 380.661 348.892 383.809 348.892H387.808C390.812 348.892 392.526 350.612 392.526 353.621V444.461ZM342.781 449.187C340.064 449.187 338.346 448.044 337.492 445.32L324.909 408.068H313.188V444.46C313.188 447.468 311.472 449.187 308.469 449.187H304.466C301.321 449.187 299.748 447.468 299.748 444.46V353.621C299.748 350.611 301.321 348.892 304.466 348.892H324.768C339.922 348.892 349.072 355.34 349.072 370.1V386.863C349.072 396.891 344.782 403.052 337.346 406.059L350.786 443.743C351.789 446.895 350.214 449.187 346.784 449.187H342.781ZM273.157 388.007C273.157 402.764 264.009 409.215 248.853 409.215H237.273V444.463C237.273 447.469 235.558 449.188 232.554 449.188H228.552C225.408 449.188 223.833 447.469 223.833 444.463V353.623C223.833 350.612 225.408 348.893 228.552 348.893H248.853C264.009 348.893 273.157 355.339 273.157 370.099V388.007ZM195.814 429.416C195.814 444.463 187.096 450.335 171.937 450.335H171.654C156.5 450.335 147.776 444.604 147.776 429.416V417.093C147.776 414.083 149.352 412.367 152.497 412.367H156.213C159.358 412.367 160.929 414.083 160.929 417.093V427.124C160.929 435.001 164.79 438.584 171.796 438.584C178.802 438.584 182.664 435.001 182.664 427.124V419.243C182.664 413.224 180.517 410.648 174.656 407.348L161.786 400.185C152.638 394.884 147.776 390.585 147.776 380.989V368.38C147.776 353.907 157.785 347.745 171.51 347.745H171.796C185.52 347.745 195.528 353.907 195.528 368.38V379.557C195.528 382.564 193.957 384.283 190.809 384.283H187.096C183.952 384.283 182.374 382.564 182.374 379.557V370.672C182.374 362.649 178.516 359.495 171.654 359.495C164.79 359.495 160.929 362.649 160.929 370.672V377.548C160.929 383.568 163.074 385.715 168.796 389.009L181.805 396.175C190.382 401.045 195.814 405.916 195.814 415.519V429.416ZM583.949 295.755H95.9718V499.384H614.012H618.329L583.949 295.755Z" fill="white"/>
-</g>
-<mask id="mask1_1_1359" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="1124" height="795">
-<path d="M0.560059 0.850647H1123.08V794.552H0.560059V0.850647Z" fill="white"/>
-</mask>
-<g mask="url(#mask1_1_1359)">
-<path d="M324.193 360.784H313.187V396.317H324.193C331.629 396.317 335.631 393.308 335.631 384.425V372.676C335.631 363.793 331.629 360.784 324.193 360.784Z" fill="white"/>
-</g>
-<mask id="mask2_1_1359" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="1124" height="795">
-<path d="M0.560059 0.850647H1123.08V794.552H0.560059V0.850647Z" fill="white"/>
-</mask>
-<g mask="url(#mask2_1_1359)">
-<path d="M248.279 360.785H237.273V397.179H248.279C255.715 397.179 259.72 394.168 259.72 385.428V372.677C259.72 363.795 255.715 360.785 248.279 360.785Z" fill="white"/>
-</g>
-<mask id="mask3_1_1359" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="1124" height="795">
-<path d="M0.560059 0.850647H1123.08V794.552H0.560059V0.850647Z" fill="white"/>
-</mask>
-<g mask="url(#mask3_1_1359)">
-<path d="M683.1 348.891C685.958 348.891 687.674 350.61 687.96 353.334L697.684 425.115L711.261 353.193C711.694 350.327 713.549 348.891 716.408 348.891H719.986C722.701 348.891 724.701 350.327 725.132 353.193L738.713 425.115L748.296 353.334C748.722 350.61 750.438 348.891 753.297 348.891H756.297C759.589 348.891 761.161 350.61 760.589 353.907L746.002 444.746C745.578 447.754 743.718 449.186 741.001 449.186H736.998C734.14 449.186 732.282 447.754 731.708 444.889L718.129 374.539L704.4 444.889C703.832 447.754 701.969 449.186 699.254 449.186H694.682C691.962 449.186 690.102 447.754 689.676 444.746L675.094 353.907C674.52 350.61 676.094 348.891 679.384 348.891H683.1ZM807.193 348.891C809.91 348.891 811.766 350.327 812.338 353.193L830.638 444.029C831.354 447.329 829.64 449.186 826.492 449.186H822.348C819.486 449.186 817.773 447.754 817.201 444.891L813.768 425.547H792.178L788.748 444.891C788.321 447.754 786.461 449.186 783.744 449.186H780.17C777.026 449.186 775.456 447.329 776.026 444.029L794.038 353.193C794.613 350.327 796.473 348.891 799.184 348.891H807.193ZM855.941 353.622C855.941 350.613 857.512 348.893 860.657 348.893H864.662C867.662 348.893 869.381 350.613 869.381 353.622V437.01H891.684C894.829 437.01 896.402 438.726 896.402 441.738V444.462C896.402 447.469 894.829 449.187 891.684 449.187H860.657C857.512 449.187 855.941 447.469 855.941 444.462V353.622ZM920.845 353.621C920.845 350.611 922.418 348.893 925.564 348.893H929.566C932.566 348.893 934.285 350.611 934.285 353.621V397.177L955.585 352.475C956.584 350.038 958.444 348.893 961.02 348.893H965.736C969.456 348.893 970.885 351.329 969.166 354.481L951.726 386.573L972.025 443.743C973.028 446.895 971.457 449.187 968.026 449.187H964.02C961.306 449.187 959.59 448.043 958.73 445.321L943.718 401.33L934.285 418.527V444.461C934.285 447.467 932.566 449.187 929.566 449.187H925.564C922.418 449.187 920.845 447.467 920.845 444.461V353.621ZM614.012 295.754L648.686 499.383H1024.13V295.754H618.329H614.012Z" fill="white"/>
-</g>
-<mask id="mask4_1_1359" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="0" y="0" width="1124" height="795">
-<path d="M0.560059 0.850647H1123.08V794.552H0.560059V0.850647Z" fill="white"/>
-</mask>
-<g mask="url(#mask4_1_1359)">
-<path d="M811.767 414.228L803.045 365.799L794.327 414.228H811.767Z" fill="white"/>
-</g>
-</svg>
-    </div>
-    <div class="tagline">Advokáti, které chtete znát</div>
-    </div>
+    <div class="container">
+        <div class="main-text" id="mainText"></div>
+        <div class="year-text" id="yearText">2026</div>
+        <div class="subtitle" id="subtitle">Jsme zde s vámi</div>
+        <div class="logo-container" id="logoContainer">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 60">
+                <text x="10" y="25" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="#FFFFFF">Spring</text>
+                <text x="10" y="50" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="#FFFFFF">Walk</text>
+                <path d="M 120 10 Q 140 10 140 30 Q 140 50 120 50" stroke="#4CAF50" stroke-width="3" fill="none"/>
+                <circle cx="145" cy="30" r="3" fill="#4CAF50"/>
+                <path d="M 150 20 L 160 30 L 150 40" stroke="#4CAF50" stroke-width="2" fill="none"/>
+            </svg>
+        </div>
     </div>
 
     <script>
-    // Create paragraph snowfall - starts immediately, independent of text animation
-    function createParagraphSnowfall() {
-    const snowfallContainer = document.getElementById('snowfall');
-    const paragraphCount = 120;
+        // Text to animate
+        const text = "Vše nejlepší v roce";
+        const mainTextEl = document.getElementById('mainText');
+        const yearTextEl = document.getElementById('yearText');
+        const subtitleEl = document.getElementById('subtitle');
+        const logoEl = document.getElementById('logoContainer');
 
-    for (let i = 0; i < paragraphCount; i++) {
-    const paragraph = document.createElement('div');
-    paragraph.className = 'paragraph-flake';
-    paragraph.textContent = '§';
+        // Create letters with sparks
+        text.split('').forEach((char, index) => {
+            const span = document.createElement('span');
+            span.className = 'letter';
+            span.textContent = char;
+            span.style.animationDelay = `${index * 0.1}s`;
+            mainTextEl.appendChild(span);
 
-    const size = Math.random() * 20 + 10;
-    paragraph.style.fontSize = size + 'px';
+            // Animate letter
+            setTimeout(() => {
+                span.style.opacity = '1';
+                span.style.transition = 'opacity 0.3s ease';
 
-    const blur = (30 - size) / 5;
-    paragraph.style.filter = `blur(${blur}px)`;
+                // ŘÁDEK 199: POČET JISKER - změň hodnotu (aktuálně 8, můžeš dát 12, 15, 20, atd.)
+                const sparkCount = 8;
 
-    const opacity = 0.3 + (size / 30) * 0.4;
-    paragraph.style.setProperty('--opacity', opacity);
+                // Create sparks for this letter
+                for (let i = 0; i < sparkCount; i++) {
+                    createSpark(span, i, sparkCount);
+                }
+            }, index * 100);
+        });
 
-    const leftPos = Math.random() * 100;
-    paragraph.style.left = leftPos + '%';
+        function createSpark(letterEl, index, total) {
+            const spark = document.createElement('div');
+            spark.className = 'spark';
 
-    const startY = -50 - Math.random() * 100;
-    paragraph.style.top = startY + 'vh';
+            const angle = (360 / total) * index;
+            const distance = 30 + Math.random() * 20;
+            const rad = (angle * Math.PI) / 180;
+            const x = Math.cos(rad) * distance;
+            const y = Math.sin(rad) * distance;
 
-    const fallDistance = 150 + Math.abs(startY) + Math.random() * 50;
-    paragraph.style.setProperty('--fall-distance', fallDistance + 'vh');
+            spark.style.left = '50%';
+            spark.style.top = '50%';
 
-    const duration = 15 + Math.random() * 15;
-    paragraph.style.animationDuration = duration + 's';
+            letterEl.appendChild(spark);
 
-    const delay = -Math.random() * 20;
-    paragraph.style.animationDelay = delay + 's';
+            setTimeout(() => {
+                spark.style.transition = 'all 0.6s ease-out';
+                spark.style.transform = `translate(${x}px, ${y}px)`;
+                spark.style.opacity = '1';
 
-    const drift = (Math.random() - 0.5) * 150;
-    paragraph.style.setProperty('--drift', drift + 'px');
+                setTimeout(() => {
+                    spark.style.opacity = '0';
+                }, 300);
+            }, 50);
+        }
 
-    snowfallContainer.appendChild(paragraph);
-    }
-    }
+        // Animate year text with flash
+        setTimeout(() => {
+            yearTextEl.style.transition = 'opacity 0.5s ease';
+            yearTextEl.style.opacity = '1';
 
-    createParagraphSnowfall();
+            // Flash effect
+            yearTextEl.style.filter = 'brightness(2)';
+            setTimeout(() => {
+                yearTextEl.style.transition = 'filter 1s ease';
+                yearTextEl.style.filter = 'brightness(1)';
+            }, 200);
+        }, text.length * 100 + 500);
 
-    const text = "Vše nejlepší v roce 2026";
-    const mainTextEl = document.getElementById('mainText');
-    const secondaryContentEl = document.getElementById('secondaryContent');
+        // Animate subtitle
+        setTimeout(() => {
+            subtitleEl.style.transition = 'opacity 1s ease';
+            subtitleEl.style.opacity = '1';
+        }, text.length * 100 + 1500);
 
-    const words = text.split(' ');
-    let allLetters = [];
+        // Animate logo
+        setTimeout(() => {
+            logoEl.style.transition = 'opacity 1.5s ease';
+            logoEl.style.opacity = '1';
+        }, text.length * 100 + 2500);
 
-    words.forEach((word, wordIndex) => {
-    const wordSpan = document.createElement('span');
-    if (word === '2026') {
-    wordSpan.className = 'word-2026';
-    }
+        // Create paragraph snowfall
+        function createParagraphSnowfall() {
+            const snowfall = document.getElementById('snowfall');
+            const paragraphCount = 120;
 
-    for (let char of word) {
-    const letterSpan = document.createElement('span');
-    letterSpan.className = 'letter';
-    letterSpan.textContent = char;
-    wordSpan.appendChild(letterSpan);
-    allLetters.push(letterSpan);
-    }
+            for (let i = 0; i < paragraphCount; i++) {
+                const paragraph = document.createElement('div');
+                paragraph.className = 'paragraph-flake';
+                paragraph.textContent = '§';
 
-    mainTextEl.appendChild(wordSpan);
+                // Random size between 10-30px
+                const size = 10 + Math.random() * 20;
+                paragraph.style.fontSize = `${size}px`;
 
-    if (wordIndex < words.length - 1) {
-    const space = document.createElement('span');
-    space.className = 'letter';
-    space.innerHTML = ' ';
-    mainTextEl.appendChild(space);
-    allLetters.push(space);
-    }
-    });
+                // Blur effect (larger = less blur, smaller = more blur for depth)
+                const blur = (30 - size) / 8;
+                paragraph.style.filter = `blur(${blur}px)`;
 
-    function createSparks(letter) {
-    const rect = letter.getBoundingClientRect();
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
+                // Opacity based on size (larger = more opaque)
+                const opacity = 0.3 + (size / 30) * 0.4;
+                paragraph.style.setProperty('--opacity', opacity);
 
-    const sparkCount = 16;
-    for (let i = 0; i < sparkCount; i++) {
-    const spark = document.createElement('div');
-    spark.className = 'spark';
-    spark.style.left = centerX + 'px';
-    spark.style.top = centerY + 'px';
+                // Random horizontal position
+                paragraph.style.left = `${Math.random() * 100}%`;
 
-    const angle = (Math.PI * 2 * i) / sparkCount;
-    const distance = 30 + Math.random() * 30;
-    const tx = Math.cos(angle) * distance;
-    const ty = Math.sin(angle) * distance;
+                // Random start position (well above viewport)
+                const startY = -50 - Math.random() * 100; // -50vh to -150vh
+                paragraph.style.top = `${startY}vh`;
 
-    spark.style.setProperty('--tx', tx + 'px');
-    spark.style.setProperty('--ty', ty + 'px');
-    spark.style.animation = `sparkFly ${0.4 + Math.random() * 0.3}s ease-out forwards`;
+                // Animation properties
+                const duration = 15 + Math.random() * 15; // 15-30 seconds
+                const delay = -Math.random() * 20; // Negative delay for immediate start
+                const drift = -20 + Math.random() * 40; // Horizontal drift
 
-    document.body.appendChild(spark);
+                // Calculate fall distance
+                const fallDistance = 150 - startY; // From startY to 150vh
 
-    setTimeout(() => spark.remove(), 700);
-    }
-    }
+                paragraph.style.animation = `fall ${duration}s linear ${delay}s infinite`;
+                paragraph.style.setProperty('--drift', `${drift}px`);
+                paragraph.style.setProperty('--fall-distance', `${fallDistance}vh`);
 
-    let delay = 500;
-    allLetters.forEach((letter, index) => {
-    setTimeout(() => {
-    letter.classList.add('visible');
-    if (letter.textContent.trim() !== '') {
-    createSparks(letter);
-    }
+                // Update keyframes for this element
+                const keyframes = `
+                    @keyframes fall-${i} {
+                        0% {
+                            transform: translateY(0) translateX(0) rotate(0deg);
+                            opacity: 0;
+                        }
+                        10% {
+                            opacity: ${opacity};
+                        }
+                        90% {
+                            opacity: ${opacity};
+                        }
+                        100% {
+                            transform: translateY(${fallDistance}vh) translateX(${drift}px) rotate(360deg);
+                            opacity: 0;
+                        }
+                    }
+                `;
 
-    if (index === allLetters.length - 1) {
-    setTimeout(() => {
-    const word2026 = document.querySelector('.word-2026');
-    word2026.classList.add('flash');
+                const style = document.createElement('style');
+                style.textContent = keyframes;
+                document.head.appendChild(style);
+                paragraph.style.animation = `fall-${i} ${duration}s linear ${delay}s infinite`;
 
-    setTimeout(() => {
-    secondaryContentEl.classList.add('visible');
-    }, 800);
-    }, 300);
-    }
-    }, delay);
-    delay += 100;
-    });
+                snowfall.appendChild(paragraph);
+            }
+        }
+
+        // Initialize snowfall immediately
+        createParagraphSnowfall();
     </script>
 </body>
 </html>
